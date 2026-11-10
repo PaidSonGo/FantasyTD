@@ -1,0 +1,9 @@
+# Target of .github/workflows/paidsongo-vrtest.yml (pushing a change here starts a run).
+# game:    branch/commit of PaidSonGo/Unity with the Unity project
+# harness: branch/commit of PaidSonGo/Unity with the VR Test Kit, overlaid on the game checkout
+#          (Assets/_Project/{Runtime,Editor}/VRTest, Tests/Editor/VRTest, Tests/PlayMode/XRSim, VRTests, tools/vrtest).
+#          Set harness=none once the kit is merged into the game branch.
+# filter:  comma-separated scenario ids, empty = all
+game=fauna/turrets-v2
+harness=ccr-c8d70e9f-nb5txu
+filter=
