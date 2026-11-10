@@ -118,6 +118,7 @@ jobs:
       - uses: game-ci/unity-test-runner@v4
         id: tests
         continue-on-error: true
+        timeout-minutes: 50   # a stalled Editor must fail fast, not burn the 2 h job limit
         with:
           projectPath: unity
           # Android module: the game's QuestProjectSetup.ConfigureAll (run before scenarios) needs it.
