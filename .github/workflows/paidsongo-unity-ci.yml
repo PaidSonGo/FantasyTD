@@ -25,6 +25,7 @@ on:
 
 permissions:
   contents: read
+  checks: write   # game-ci posts the EditMode results as a check run on this commit
 
 concurrency:
   group: paidsongo-unity-ci
