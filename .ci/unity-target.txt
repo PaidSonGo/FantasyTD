@@ -1,0 +1,4 @@
+# Target of .github/workflows/paidsongo-unity-ci.yml (pushing a change here starts a run).
+# ref: branch or commit of the public repository PaidSonGo/Unity. apk: true also builds the Quest APK.
+ref=9bb7f19356f80164fc460dbf4c27ff2f95a5c380
+apk=true
