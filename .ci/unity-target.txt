@@ -1,4 +1,5 @@
-# Free CI target for PaidSonGo/Unity Fauna M1 hotfix; select by exact commit.
-# The push runs EditMode first, Quest APK only if all tests pass.
-ref=40cd74c40f259917c0d20039c96c310d46e51a56
+# Free GitHub Actions CI: PaidSonGo/Unity M2 Quest terrain sandbox
+# Compile/EditMode uses Android-enabled Unity image; APK uses BuildM2Apk (not M1 scene).
+ref=e84bd1fd1a0577a80f975eddbbe60f4eb456c973
 apk=true
+m2=true
