@@ -22,6 +22,10 @@ on:
         description: Also build the Quest APK
         type: boolean
         default: true
+      m2:
+        description: Build the M2 living terrain Quest sandbox (not M1)
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -38,6 +42,7 @@ jobs:
     outputs:
       ref: ${{ steps.t.outputs.ref }}
       apk: ${{ steps.t.outputs.apk }}
+      m2: ${{ steps.t.outputs.m2 }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -47,18 +52,24 @@ jobs:
         env:
           IN_REF: ${{ inputs.ref }}
           IN_APK: ${{ inputs.apk }}
+          IN_M2: ${{ inputs.m2 }}
           EVENT: ${{ github.event_name }}
         run: |
           set -euo pipefail
-          ref="$IN_REF"; apk="$IN_APK"
+          ref="$IN_REF"; apk="$IN_APK"; m2="$IN_M2"
           if [ -z "$ref" ]; then ref=$(sed -n 's/^ref=//p' .ci/unity-target.txt | head -1); fi
-          if [ "$EVENT" != "workflow_dispatch" ]; then apk=$(sed -n 's/^apk=//p' .ci/unity-target.txt | head -1); fi
+          if [ "$EVENT" != "workflow_dispatch" ]; then
+            apk=$(sed -n 's/^apk=//p' .ci/unity-target.txt | head -1)
+            m2=$(sed -n 's/^m2=//p' .ci/unity-target.txt | head -1)
+          fi
           [ -n "$ref" ] || { echo "::error::No PaidSonGo/Unity ref given"; exit 1; }
           case "$ref" in *[!A-Za-z0-9._/-]*) echo "::error::Invalid ref '$ref'"; exit 1;; esac
           [ "$apk" = "true" ] || apk=false
+          [ "$m2" = "true" ] || m2=false
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
           echo "apk=$apk" >> "$GITHUB_OUTPUT"
-          echo "Target: PaidSonGo/Unity@$ref  apk=$apk" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "m2=$m2" >> "$GITHUB_OUTPUT"
+          echo "Target: PaidSonGo/Unity@$ref  apk=$apk  m2=$m2" | tee -a "$GITHUB_STEP_SUMMARY"
 
   editmode:
     name: Unity compile + EditMode tests
@@ -93,6 +104,7 @@ jobs:
         with:
           projectPath: unity
           testMode: editmode
+          customImage: unityci/editor:ubuntu-6000.6.0f1-android-3
           artifactsPath: test-results
       - name: Summarize results (fails on zero executed tests)
         if: always()
@@ -157,8 +169,8 @@ jobs:
           projectPath: unity
           targetPlatform: Android
           androidExportType: androidPackage
-          buildMethod: LaneDefense.EditorTools.QuestBuild.BuildApk
-          buildName: LaneDefenseVR
+          buildMethod: ${{ needs.target.outputs.m2 == 'true' && 'LaneDefense.EditorTools.QuestBuild.BuildM2Apk' || 'LaneDefense.EditorTools.QuestBuild.BuildApk' }}
+          buildName: ${{ needs.target.outputs.m2 == 'true' && 'FaunaM2Sandbox' || 'LaneDefenseVR' }}
       - name: Require an APK
         shell: bash
         run: |
