@@ -43,6 +43,11 @@ jobs:
           [ -n "$UNITY_PASSWORD" ] || missing="$missing UNITY_PASSWORD"
           if [ -n "$missing" ]; then echo "::error title=Unity NOT VERIFIED::Missing secrets:$missing"; exit 1; fi
 
+      - name: Free disk space for the Android editor image
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          df -h /
+
       - uses: actions/checkout@v4
 
       - name: Read target
@@ -115,6 +120,8 @@ jobs:
         continue-on-error: true
         with:
           projectPath: unity
+          # Android module: the game's QuestProjectSetup.ConfigureAll (run before scenarios) needs it.
+          customImage: unityci/editor:ubuntu-6000.6.0f1-android-3
           testMode: all
           artifactsPath: test-results
           customParameters: ${{ steps.t.outputs.filter != '' && format('-vrtestFilter {0}', steps.t.outputs.filter) || '' }}
