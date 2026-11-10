@@ -1,4 +1,4 @@
 # Free CI target for PaidSonGo/Unity Fauna M1 hotfix; select by exact commit.
 # The push runs EditMode first, Quest APK only if all tests pass.
-ref=9c290610f64045d3bc4e618e709a0c346592e98e
+ref=40cd74c40f259917c0d20039c96c310d46e51a56
 apk=true
