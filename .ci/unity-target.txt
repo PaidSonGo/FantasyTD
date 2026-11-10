@@ -1,4 +1,4 @@
-# Target of .github/workflows/paidsongo-unity-ci.yml (pushing a change here starts a run).
-# ref: branch or commit of the public repository PaidSonGo/Unity. apk: true also builds the Quest APK.
-ref=9bb7f19356f80164fc460dbf4c27ff2f95a5c380
+# Free CI target for PaidSonGo/Unity Fauna M1 hotfix; select by exact commit.
+# The push runs EditMode first, Quest APK only if all tests pass.
+ref=9c290610f64045d3bc4e618e709a0c346592e98e
 apk=true
