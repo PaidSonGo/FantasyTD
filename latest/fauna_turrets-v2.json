@@ -1,7 +1,7 @@
 {
-  "sha": "8451128979b437aa033a091ce92c611b98bb2c26",
+  "sha": "40cd74c40f259917c0d20039c96c310d46e51a56",
   "label": "sim",
   "ref": "fauna/turrets-v2",
-  "run": "https://github.com/PaidSonGo/FantasyTD/actions/runs/42779551599 (harness 2c40753a9dc6adf14e3673792bfcb8e8473be8dc)",
-  "publishedUtc": "2026-11-10T10:02:34+00:00"
+  "run": "https://github.com/PaidSonGo/FantasyTD/actions/runs/42815276466 (harness fcc4e07f19f5685e7b0990c951befdbbdb3ac907)",
+  "publishedUtc": "2026-11-10T12:28:36+00:00"
 }
