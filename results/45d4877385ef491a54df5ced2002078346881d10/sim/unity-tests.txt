@@ -1,0 +1,6 @@
+Unity tests: total=87 passed=86 failed=1
+game PaidSonGo/Unity@45d4877385ef491a54df5ced2002078346881d10  harness@09b918582598526c78352e1f6bfcfccb99b0094b
+- FAILED VRTestKit.Tests.ProjectAuditTests.QuestProjectSettings_HaveNoFailures: System.InvalidOperationException : prepareMethods: 'LaneDefense.EditorTools.QuestProjectSetup.ConfigureAll' threw System.InvalidOperationException: OpenXR settings for Android not available; is the Android module installed?
+  at LaneDefense.EditorTools.QuestProjectSetup.ConfigureXR () [0x00147] in /github/workspace/unity/Assets/_Project/Editor/Quest/QuestProjectSetup.cs:98 
+  at LaneDefense.EditorTools.QuestProjectSetup.ConfigureAll () [0x00007] in /github/workspace/unity/Assets/_Project/Editor/Quest/QuestProjectSetup.cs:46 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.

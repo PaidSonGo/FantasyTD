@@ -1,0 +1,627 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="87" result="Failed(Child)" total="87" passed="86" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:34Z" duration="1.0010134">
+  <test-suite type="TestSuite" id="1000" name="LaneDefenseVR" fullname="LaneDefenseVR" runstate="Runnable" testcasecount="87" result="Failed" site="Child" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:34Z" duration="1.001013" total="87" passed="86" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1077" name="GameTemplate.EditorTests.dll" fullname="/github/workspace/unity/Library/ScriptAssemblies/GameTemplate.EditorTests.dll" runstate="Runnable" testcasecount="65" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:34Z" duration="0.382068" total="65" passed="65" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6754" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestFixture" id="1002" name="FaunaEvolutionTests" fullname="FaunaEvolutionTests" classname="FaunaEvolutionTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.048310" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1003" name="CostOfNext_IsStagePriceAndMinusOneAtStageThree" fullname="FaunaEvolutionTests.CostOfNext_IsStagePriceAndMinusOneAtStageThree" methodname="CostOfNext_IsStagePriceAndMinusOneAtStageThree" classname="FaunaEvolutionTests" runstate="Runnable" seed="1713005241" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.015295" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1008" name="EvolutionData_Has47DefendersWithBothStagesAndNoFormerDuplicates" fullname="FaunaEvolutionTests.EvolutionData_Has47DefendersWithBothStagesAndNoFormerDuplicates" methodname="EvolutionData_Has47DefendersWithBothStagesAndNoFormerDuplicates" classname="FaunaEvolutionTests" runstate="Runnable" seed="708542868" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.009932" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1004" name="TryEvolve_PaysAndMovesOneStageUp" fullname="FaunaEvolutionTests.TryEvolve_PaysAndMovesOneStageUp" methodname="TryEvolve_PaysAndMovesOneStageUp" classname="FaunaEvolutionTests" runstate="Runnable" seed="625925483" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.001620" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1005" name="TryEvolve_RefusesWithoutEnoughDnaAndChangesNothing" fullname="FaunaEvolutionTests.TryEvolve_RefusesWithoutEnoughDnaAndChangesNothing" methodname="TryEvolve_RefusesWithoutEnoughDnaAndChangesNothing" classname="FaunaEvolutionTests" runstate="Runnable" seed="2025373182" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000303" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1007" name="TryEvolve_RejectsNegativeCosts" fullname="FaunaEvolutionTests.TryEvolve_RejectsNegativeCosts" methodname="TryEvolve_RejectsNegativeCosts" classname="FaunaEvolutionTests" runstate="Runnable" seed="2140262425" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.001381" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1006" name="TryEvolve_StopsAtStageThree" fullname="FaunaEvolutionTests.TryEvolve_StopsAtStageThree" methodname="TryEvolve_StopsAtStageThree" classname="FaunaEvolutionTests" runstate="Runnable" seed="128228386" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000285" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1009" name="FaunaShowcaseBuildTests" fullname="FaunaShowcaseBuildTests" classname="FaunaShowcaseBuildTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.008790" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="ParameterizedMethod" id="1019" name="MaterialGuard_AcceptsUrpShaders" fullname="FaunaShowcaseBuildTests.MaterialGuard_AcceptsUrpShaders" classname="FaunaShowcaseBuildTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.002298" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1015" name="MaterialGuard_AcceptsUrpShaders(&quot;Universal Render Pipeline/Lit&quot;)" fullname="FaunaShowcaseBuildTests.MaterialGuard_AcceptsUrpShaders(&quot;Universal Render Pipeline/Lit&quot;)" methodname="MaterialGuard_AcceptsUrpShaders" classname="FaunaShowcaseBuildTests" runstate="Runnable" seed="1281104568" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000464" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1016" name="MaterialGuard_AcceptsUrpShaders(&quot;Universal Render Pipeline/Particles/Unlit&quot;)" fullname="FaunaShowcaseBuildTests.MaterialGuard_AcceptsUrpShaders(&quot;Universal Render Pipeline/Particles/Unlit&quot;)" methodname="MaterialGuard_AcceptsUrpShaders" classname="FaunaShowcaseBuildTests" runstate="Runnable" seed="1683567097" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000110" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1017" name="MaterialGuard_AcceptsUrpShaders(&quot;Shader Graphs/glTF-pbrMetallicRoughness&quot;)" fullname="FaunaShowcaseBuildTests.MaterialGuard_AcceptsUrpShaders(&quot;Shader Graphs/glTF-pbrMetallicRoughness&quot;)" methodname="MaterialGuard_AcceptsUrpShaders" classname="FaunaShowcaseBuildTests" runstate="Runnable" seed="1162211043" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000112" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1018" name="MaterialGuard_AcceptsUrpShaders(&quot;GUI/Text Shader&quot;)" fullname="FaunaShowcaseBuildTests.MaterialGuard_AcceptsUrpShaders(&quot;GUI/Text Shader&quot;)" methodname="MaterialGuard_AcceptsUrpShaders" classname="FaunaShowcaseBuildTests" runstate="Runnable" seed="1591925093" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000109" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+        </test-suite>
+        <test-suite type="ParameterizedMethod" id="1014" name="MaterialGuard_RejectsShadersUrpDrawsMagenta" fullname="FaunaShowcaseBuildTests.MaterialGuard_RejectsShadersUrpDrawsMagenta" classname="FaunaShowcaseBuildTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.001744" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1010" name="MaterialGuard_RejectsShadersUrpDrawsMagenta(&quot;glTF/PbrMetallicRoughness&quot;)" fullname="FaunaShowcaseBuildTests.MaterialGuard_RejectsShadersUrpDrawsMagenta(&quot;glTF/PbrMetallicRoughness&quot;)" methodname="MaterialGuard_RejectsShadersUrpDrawsMagenta" classname="FaunaShowcaseBuildTests" runstate="Runnable" seed="108269409" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000212" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1011" name="MaterialGuard_RejectsShadersUrpDrawsMagenta(&quot;Standard&quot;)" fullname="FaunaShowcaseBuildTests.MaterialGuard_RejectsShadersUrpDrawsMagenta(&quot;Standard&quot;)" methodname="MaterialGuard_RejectsShadersUrpDrawsMagenta" classname="FaunaShowcaseBuildTests" runstate="Runnable" seed="1057958945" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000104" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1012" name="MaterialGuard_RejectsShadersUrpDrawsMagenta(&quot;Legacy Shaders/Diffuse&quot;)" fullname="FaunaShowcaseBuildTests.MaterialGuard_RejectsShadersUrpDrawsMagenta(&quot;Legacy Shaders/Diffuse&quot;)" methodname="MaterialGuard_RejectsShadersUrpDrawsMagenta" classname="FaunaShowcaseBuildTests" runstate="Runnable" seed="1872156656" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000101" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1013" name="MaterialGuard_RejectsShadersUrpDrawsMagenta(&quot;Hidden/InternalErrorShader&quot;)" fullname="FaunaShowcaseBuildTests.MaterialGuard_RejectsShadersUrpDrawsMagenta(&quot;Hidden/InternalErrorShader&quot;)" methodname="MaterialGuard_RejectsShadersUrpDrawsMagenta" classname="FaunaShowcaseBuildTests" runstate="Runnable" seed="1512328139" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000100" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+        </test-suite>
+        <test-case id="1020" name="ShowcasePositions_AllStayOffTheBoard" fullname="FaunaShowcaseBuildTests.ShowcasePositions_AllStayOffTheBoard" methodname="ShowcasePositions_AllStayOffTheBoard" classname="FaunaShowcaseBuildTests" runstate="Runnable" seed="1632316377" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.002896" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1021" name="FirstLoopSimTests" fullname="FirstLoopSimTests" classname="FirstLoopSimTests" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.018807" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1034" name="AfterAResult_CommandsAreIgnored" fullname="FirstLoopSimTests.AfterAResult_CommandsAreIgnored" methodname="AfterAResult_CommandsAreIgnored" classname="FirstLoopSimTests" runstate="Runnable" seed="1322270458" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.004017" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1032" name="Alien_StopsAtADefenderAndBitesItUntilItIsGone" fullname="FirstLoopSimTests.Alien_StopsAtADefenderAndBitesItUntilItIsGone" methodname="Alien_StopsAtADefenderAndBitesItUntilItIsGone" classname="FirstLoopSimTests" runstate="Runnable" seed="1199881731" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.001902" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1024" name="CollectPickup_AddsPickupDna" fullname="FirstLoopSimTests.CollectPickup_AddsPickupDna" methodname="CollectPickup_AddsPickupDna" classname="FirstLoopSimTests" runstate="Runnable" seed="25033918" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000215" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1028" name="Constructor_RejectsSpawnRowOutsideTheBoard" fullname="FirstLoopSimTests.Constructor_RejectsSpawnRowOutsideTheBoard" methodname="Constructor_RejectsSpawnRowOutsideTheBoard" classname="FirstLoopSimTests" runstate="Runnable" seed="1914723899" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000365" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1037" name="DataFile_MissingKeys_KeepDefaults" fullname="FirstLoopSimTests.DataFile_MissingKeys_KeepDefaults" methodname="DataFile_MissingKeys_KeepDefaults" classname="FirstLoopSimTests" runstate="Runnable" seed="1054440326" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000833" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1035" name="DataFile_ParsesIntoAPlayableConfig" fullname="FirstLoopSimTests.DataFile_ParsesIntoAPlayableConfig" methodname="DataFile_ParsesIntoAPlayableConfig" classname="FirstLoopSimTests" runstate="Runnable" seed="805843635" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.001572" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1036" name="DataFile_WithAnotherSchemaVersion_IsRejected" fullname="FirstLoopSimTests.DataFile_WithAnotherSchemaVersion_IsRejected" methodname="DataFile_WithAnotherSchemaVersion_IsRejected" classname="FirstLoopSimTests" runstate="Runnable" seed="947025470" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000630" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1030" name="Defender_ShootsOnlyAliensInItsOwnRow" fullname="FirstLoopSimTests.Defender_ShootsOnlyAliensInItsOwnRow" methodname="Defender_ShootsOnlyAliensInItsOwnRow" classname="FirstLoopSimTests" runstate="Runnable" seed="1409468266" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000847" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1031" name="Defenders_KillTheWave_AndTheLoopIsWon" fullname="FirstLoopSimTests.Defenders_KillTheWave_AndTheLoopIsWon" methodname="Defenders_KillTheWave_AndTheLoopIsWon" classname="FirstLoopSimTests" runstate="Runnable" seed="1044380271" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000438" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1026" name="Remove_ClearsTheCellWithoutRefund" fullname="FirstLoopSimTests.Remove_ClearsTheCellWithoutRefund" methodname="Remove_ClearsTheCellWithoutRefund" classname="FirstLoopSimTests" runstate="Runnable" seed="1498342169" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000367" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1033" name="Shots_ListsOnlyTheShotsOfTheLastTick" fullname="FirstLoopSimTests.Shots_ListsOnlyTheShotsOfTheLastTick" methodname="Shots_ListsOnlyTheShotsOfTheLastTick" classname="FirstLoopSimTests" runstate="Runnable" seed="1685569860" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000466" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1025" name="TryEvolve_PaysStagePriceAndRaisesDamage" fullname="FirstLoopSimTests.TryEvolve_PaysStagePriceAndRaisesDamage" methodname="TryEvolve_PaysStagePriceAndRaisesDamage" classname="FirstLoopSimTests" runstate="Runnable" seed="2098093257" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000569" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1023" name="TryPlace_FailsWithoutEnoughDnaOrOutsideTheBoard" fullname="FirstLoopSimTests.TryPlace_FailsWithoutEnoughDnaOrOutsideTheBoard" methodname="TryPlace_FailsWithoutEnoughDnaOrOutsideTheBoard" classname="FirstLoopSimTests" runstate="Runnable" seed="104829540" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000268" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1022" name="TryPlace_PaysCostAndOccupiesTheCell" fullname="FirstLoopSimTests.TryPlace_PaysCostAndOccupiesTheCell" methodname="TryPlace_PaysCostAndOccupiesTheCell" classname="FirstLoopSimTests" runstate="Runnable" seed="860413036" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000451" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1029" name="UndefendedLane_IsLostWhenAnAlienReachesTheEnd" fullname="FirstLoopSimTests.UndefendedLane_IsLostWhenAnAlienReachesTheEnd" methodname="UndefendedLane_IsLostWhenAnAlienReachesTheEnd" classname="FirstLoopSimTests" runstate="Runnable" seed="552374668" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000285" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1027" name="Wave_SpawnsEachAlienAtItsTimeInItsRow" fullname="FirstLoopSimTests.Wave_SpawnsEachAlienAtItsTimeInItsRow" methodname="Wave_SpawnsEachAlienAtItsTimeInItsRow" classname="FirstLoopSimTests" runstate="Runnable" seed="1659552091" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000469" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1038" name="InputActionsContractTests" fullname="InputActionsContractTests" classname="InputActionsContractTests" runstate="Runnable" testcasecount="29" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.058773" total="29" passed="29" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1039" name="AssetParsesAndHasExpectedMaps" fullname="InputActionsContractTests.AssetParsesAndHasExpectedMaps" methodname="AssetParsesAndHasExpectedMaps" classname="InputActionsContractTests" runstate="Runnable" seed="1065127551" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.011663" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1068" name="DefaultTouchPlusBindingsMatchTheContract" fullname="InputActionsContractTests.DefaultTouchPlusBindingsMatchTheContract" methodname="DefaultTouchPlusBindingsMatchTheContract" classname="InputActionsContractTests" runstate="Runnable" seed="2006251783" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.004187" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1067" name="NoActionBindsTheSystemOrMenuButton" fullname="InputActionsContractTests.NoActionBindsTheSystemOrMenuButton" methodname="NoActionBindsTheSystemOrMenuButton" classname="InputActionsContractTests" runstate="Runnable" seed="1116239709" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.002690" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-suite type="ParameterizedMethod" id="1066" name="RequiredActionExistsWithTypeAndBinding" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" testcasecount="26" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.033141" total="26" passed="26" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1040" name="RequiredActionExistsWithTypeAndBinding(&quot;Head&quot;,&quot;Position&quot;,Value,&quot;Vector3&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;Head&quot;,&quot;Position&quot;,Value,&quot;Vector3&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="892812216" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.001808" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1041" name="RequiredActionExistsWithTypeAndBinding(&quot;Head&quot;,&quot;Rotation&quot;,Value,&quot;Quaternion&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;Head&quot;,&quot;Rotation&quot;,Value,&quot;Quaternion&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="2065007994" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000924" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1042" name="RequiredActionExistsWithTypeAndBinding(&quot;Head&quot;,&quot;Tracking State&quot;,Value,&quot;Integer&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;Head&quot;,&quot;Tracking State&quot;,Value,&quot;Integer&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="1824084786" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000938" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1043" name="RequiredActionExistsWithTypeAndBinding(&quot;LeftHand&quot;,&quot;Position&quot;,Value,&quot;Vector3&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;LeftHand&quot;,&quot;Position&quot;,Value,&quot;Vector3&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="2028151077" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000932" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1044" name="RequiredActionExistsWithTypeAndBinding(&quot;LeftHand&quot;,&quot;Rotation&quot;,Value,&quot;Quaternion&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;LeftHand&quot;,&quot;Rotation&quot;,Value,&quot;Quaternion&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="1901542776" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000989" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1045" name="RequiredActionExistsWithTypeAndBinding(&quot;LeftHand&quot;,&quot;Tracking State&quot;,Value,&quot;Integer&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;LeftHand&quot;,&quot;Tracking State&quot;,Value,&quot;Integer&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="654157961" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000944" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1046" name="RequiredActionExistsWithTypeAndBinding(&quot;LeftHand&quot;,&quot;Haptic&quot;,PassThrough,&quot;&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;LeftHand&quot;,&quot;Haptic&quot;,PassThrough,&quot;&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="1994007961" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000955" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1047" name="RequiredActionExistsWithTypeAndBinding(&quot;RightHand&quot;,&quot;Position&quot;,Value,&quot;Vector3&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;RightHand&quot;,&quot;Position&quot;,Value,&quot;Vector3&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="41226772" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.001033" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1048" name="RequiredActionExistsWithTypeAndBinding(&quot;RightHand&quot;,&quot;Rotation&quot;,Value,&quot;Quaternion&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;RightHand&quot;,&quot;Rotation&quot;,Value,&quot;Quaternion&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="1988248292" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000979" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1049" name="RequiredActionExistsWithTypeAndBinding(&quot;RightHand&quot;,&quot;Tracking State&quot;,Value,&quot;Integer&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;RightHand&quot;,&quot;Tracking State&quot;,Value,&quot;Integer&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="1723660072" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000948" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1050" name="RequiredActionExistsWithTypeAndBinding(&quot;RightHand&quot;,&quot;Point Position&quot;,Value,&quot;Vector3&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;RightHand&quot;,&quot;Point Position&quot;,Value,&quot;Vector3&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="1833052169" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000941" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1051" name="RequiredActionExistsWithTypeAndBinding(&quot;RightHand&quot;,&quot;Point Rotation&quot;,Value,&quot;Quaternion&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;RightHand&quot;,&quot;Point Rotation&quot;,Value,&quot;Quaternion&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="244601777" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000982" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1052" name="RequiredActionExistsWithTypeAndBinding(&quot;RightHand&quot;,&quot;Haptic&quot;,PassThrough,&quot;&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;RightHand&quot;,&quot;Haptic&quot;,PassThrough,&quot;&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="745752963" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000932" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1053" name="RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;Select&quot;,Button,&quot;Button&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;Select&quot;,Button,&quot;Button&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="1901396216" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000955" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1054" name="RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;Plant&quot;,Button,&quot;Button&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;Plant&quot;,Button,&quot;Button&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="851577237" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.001001" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1055" name="RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;Collect&quot;,Button,&quot;Button&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;Collect&quot;,Button,&quot;Button&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="724318905" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.001023" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1056" name="RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;SeedSelect&quot;,Button,&quot;Button&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;SeedSelect&quot;,Button,&quot;Button&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="662303618" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.001040" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1057" name="RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;SeedBelt&quot;,Button,&quot;Button&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;SeedBelt&quot;,Button,&quot;Button&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="2095915222" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.001017" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1058" name="RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;Shovel&quot;,Button,&quot;Button&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;Shovel&quot;,Button,&quot;Button&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="1169508180" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000973" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1059" name="RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;QuickSelect&quot;,Button,&quot;Button&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;QuickSelect&quot;,Button,&quot;Button&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="185184810" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000982" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1060" name="RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;ToggleView&quot;,Button,&quot;Button&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;ToggleView&quot;,Button,&quot;Button&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="1337271340" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000971" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1061" name="RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;Confirm&quot;,Button,&quot;Button&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;Confirm&quot;,Button,&quot;Button&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="795014270" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.000980" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1062" name="RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;Menu&quot;,Button,&quot;Button&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;Menu&quot;,Button,&quot;Button&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="68165752" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.001008" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1063" name="RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;Teleport&quot;,Button,&quot;Button&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;Gameplay&quot;,&quot;Teleport&quot;,Button,&quot;Button&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="916883220" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.001070" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1064" name="RequiredActionExistsWithTypeAndBinding(&quot;Locomotion&quot;,&quot;Move&quot;,Value,&quot;Vector2&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;Locomotion&quot;,&quot;Move&quot;,Value,&quot;Vector2&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="1467285637" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.001108" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1065" name="RequiredActionExistsWithTypeAndBinding(&quot;Locomotion&quot;,&quot;Turn&quot;,Value,&quot;Vector2&quot;)" fullname="InputActionsContractTests.RequiredActionExistsWithTypeAndBinding(&quot;Locomotion&quot;,&quot;Turn&quot;,Value,&quot;Vector2&quot;)" methodname="RequiredActionExistsWithTypeAndBinding" classname="InputActionsContractTests" runstate="Runnable" seed="836407450" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.001060" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+        </test-suite>
+      </test-suite>
+      <test-suite type="TestFixture" id="1069" name="QuestCollectibleTests" fullname="QuestCollectibleTests" classname="QuestCollectibleTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.014206" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1070" name="CollectibleTemplate_ListsItsTriggerColliderOnTheInteractable" fullname="QuestCollectibleTests.CollectibleTemplate_ListsItsTriggerColliderOnTheInteractable" methodname="CollectibleTemplate_ListsItsTriggerColliderOnTheInteractable" classname="QuestCollectibleTests" runstate="Runnable" seed="945691735" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.012746" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1071" name="QuestSceneInputReferencesTests" fullname="QuestSceneInputReferencesTests" classname="QuestSceneInputReferencesTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:34Z" duration="0.169841" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1072" name="EveryActionBuildSceneBinds_ResolvesToPersistentImporterReference" fullname="QuestSceneInputReferencesTests.EveryActionBuildSceneBinds_ResolvesToPersistentImporterReference" methodname="EveryActionBuildSceneBinds_ResolvesToPersistentImporterReference" classname="QuestSceneInputReferencesTests" runstate="Runnable" seed="143780376" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:33Z" duration="0.056714" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1073" name="References_StillResolve_AfterNewSceneUnloadsUnusedAssets" fullname="QuestSceneInputReferencesTests.References_StillResolve_AfterNewSceneUnloadsUnusedAssets" methodname="References_StillResolve_AfterNewSceneUnloadsUnusedAssets" classname="QuestSceneInputReferencesTests" runstate="Runnable" seed="1111512499" result="Passed" start-time="2026-11-10 03:14:33Z" end-time="2026-11-10 03:14:34Z" duration="0.104815" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1074" name="ResolveActionReference_Throws_ForUnknownAction" fullname="QuestSceneInputReferencesTests.ResolveActionReference_Throws_ForUnknownAction" methodname="ResolveActionReference_Throws_ForUnknownAction" classname="QuestSceneInputReferencesTests" runstate="Runnable" seed="1974877548" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.002821" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1075" name="TemplateTests" fullname="TemplateTests" classname="TemplateTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.060005" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1076" name="StarterHasOnlyCameraAndLightAndNoGameplayAssets" fullname="TemplateTests.StarterHasOnlyCameraAndLightAndNoGameplayAssets" methodname="StarterHasOnlyCameraAndLightAndNoGameplayAssets" classname="TemplateTests" runstate="Runnable" seed="1406149086" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.058352" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="1110" name="VRTestKit.Tests.Editor.dll" fullname="/github/workspace/unity/Library/ScriptAssemblies/VRTestKit.Tests.Editor.dll" runstate="Runnable" testcasecount="22" result="Failed" site="Child" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.606785" total="22" passed="21" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6754" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1111" name="VRTestKit" fullname="VRTestKit" runstate="Runnable" testcasecount="22" result="Failed" site="Child" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.604539" total="22" passed="21" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1112" name="Tests" fullname="VRTestKit.Tests" runstate="Runnable" testcasecount="22" result="Failed" site="Child" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.604087" total="22" passed="21" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1085" name="CoreTests" fullname="VRTestKit.Tests.CoreTests" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" testcasecount="21" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.036026" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1100" name="AngularSize_MatchesGeometry" fullname="VRTestKit.Tests.CoreTests.AngularSize_MatchesGeometry" methodname="AngularSize_MatchesGeometry" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="1858541618" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.001664" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1091" name="BadJson_ReportsLineAndColumn" fullname="VRTestKit.Tests.CoreTests.BadJson_ReportsLineAndColumn" methodname="BadJson_ReportsLineAndColumn" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="6898594" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.003814" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1099" name="Compare_Evaluates" fullname="VRTestKit.Tests.CoreTests.Compare_Evaluates" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.004632" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1092" name="Compare_Evaluates(50.0d,&quot;&gt;=&quot;,50.0d,True)" fullname="VRTestKit.Tests.CoreTests.Compare_Evaluates(50.0d,&quot;&gt;=&quot;,50.0d,True)" methodname="Compare_Evaluates" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="531709242" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.001076" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1093" name="Compare_Evaluates(49.0d,&quot;&gt;=&quot;,50.0d,False)" fullname="VRTestKit.Tests.CoreTests.Compare_Evaluates(49.0d,&quot;&gt;=&quot;,50.0d,False)" methodname="Compare_Evaluates" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="1187247474" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.000151" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1094" name="Compare_Evaluates(&quot;12&quot;,&quot;==&quot;,12.0d,True)" fullname="VRTestKit.Tests.CoreTests.Compare_Evaluates(&quot;12&quot;,&quot;==&quot;,12.0d,True)" methodname="Compare_Evaluates" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="120665662" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.000356" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1095" name="Compare_Evaluates(True,&quot;==&quot;,1.0d,True)" fullname="VRTestKit.Tests.CoreTests.Compare_Evaluates(True,&quot;==&quot;,1.0d,True)" methodname="Compare_Evaluates" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="1216314860" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.000137" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1096" name="Compare_Evaluates(&quot;Victory&quot;,&quot;==&quot;,&quot;Victory&quot;,True)" fullname="VRTestKit.Tests.CoreTests.Compare_Evaluates(&quot;Victory&quot;,&quot;==&quot;,&quot;Victory&quot;,True)" methodname="Compare_Evaluates" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="1557941887" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.000348" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1097" name="Compare_Evaluates(&quot;Level complete&quot;,&quot;contains&quot;,&quot;complete&quot;,True)" fullname="VRTestKit.Tests.CoreTests.Compare_Evaluates(&quot;Level complete&quot;,&quot;contains&quot;,&quot;complete&quot;,True)" methodname="Compare_Evaluates" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="1140810123" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.000146" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1098" name="Compare_Evaluates(&quot;abc&quot;,&quot;!=&quot;,&quot;abd&quot;,True)" fullname="VRTestKit.Tests.CoreTests.Compare_Evaluates(&quot;abc&quot;,&quot;!=&quot;,&quot;abd&quot;,True)" methodname="Compare_Evaluates" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="1625484455" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.000358" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1106" name="Config_ReadsKnownKeys_AndWarnsOnUnknown" fullname="VRTestKit.Tests.CoreTests.Config_ReadsKnownKeys_AndWarnsOnUnknown" methodname="Config_ReadsKnownKeys_AndWarnsOnUnknown" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="92485466" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.002433" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1107" name="Config_ReadsPrepareMethods_AndRejectsNonStrings" fullname="VRTestKit.Tests.CoreTests.Config_ReadsPrepareMethods_AndRejectsNonStrings" methodname="Config_ReadsPrepareMethods_AndRejectsNonStrings" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="826886258" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.002214" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1101" name="DeltaAngle_Wraps" fullname="VRTestKit.Tests.CoreTests.DeltaAngle_Wraps" methodname="DeltaAngle_Wraps" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="282000661" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.000392" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1102" name="FrameStats_PercentilesAndBudget" fullname="VRTestKit.Tests.CoreTests.FrameStats_PercentilesAndBudget" methodname="FrameStats_PercentilesAndBudget" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="1451778463" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.003187" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1105" name="Json_RoundTripsEscapes" fullname="VRTestKit.Tests.CoreTests.Json_RoundTripsEscapes" methodname="Json_RoundTripsEscapes" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="1898191637" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.001823" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1090" name="MissingTopLevelFields_AreReported" fullname="VRTestKit.Tests.CoreTests.MissingTopLevelFields_AreReported" methodname="MissingTopLevelFields_AreReported" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="256394214" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.002699" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1089" name="ProbeAssert_NeedsOpAndValue" fullname="VRTestKit.Tests.CoreTests.ProbeAssert_NeedsOpAndValue" methodname="ProbeAssert_NeedsOpAndValue" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="630160567" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.002106" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1104" name="Report_BlockedIsNotOverriddenByConclude" fullname="VRTestKit.Tests.CoreTests.Report_BlockedIsNotOverriddenByConclude" methodname="Report_BlockedIsNotOverriddenByConclude" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="745916144" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.001075" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1103" name="Report_ConcludesFromFindings_AndSerializes" fullname="VRTestKit.Tests.CoreTests.Report_ConcludesFromFindings_AndSerializes" methodname="Report_ConcludesFromFindings_AndSerializes" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="572643957" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.001776" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1087" name="UnknownStep_IsRejectedWithTheListOfKinds" fullname="VRTestKit.Tests.CoreTests.UnknownStep_IsRejectedWithTheListOfKinds" methodname="UnknownStep_IsRejectedWithTheListOfKinds" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="258141137" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.000600" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1086" name="ValidScenario_ParsesAllSteps" fullname="VRTestKit.Tests.CoreTests.ValidScenario_ParsesAllSteps" methodname="ValidScenario_ParsesAllSteps" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="2040087652" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.001385" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1088" name="WrongTypes_AndUnknownKeys_AreReported" fullname="VRTestKit.Tests.CoreTests.WrongTypes_AndUnknownKeys_AreReported" methodname="WrongTypes_AndUnknownKeys_AreReported" classname="VRTestKit.Tests.CoreTests" runstate="Runnable" seed="1005845401" result="Passed" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.000639" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1108" name="ProjectAuditTests" fullname="VRTestKit.Tests.ProjectAuditTests" classname="VRTestKit.Tests.ProjectAuditTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.566789" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1109" name="QuestProjectSettings_HaveNoFailures" fullname="VRTestKit.Tests.ProjectAuditTests.QuestProjectSettings_HaveNoFailures" methodname="QuestProjectSettings_HaveNoFailures" classname="VRTestKit.Tests.ProjectAuditTests" runstate="Runnable" seed="1251127197" result="Failed" label="Error" start-time="2026-11-10 03:14:34Z" end-time="2026-11-10 03:14:34Z" duration="0.565279" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.InvalidOperationException : prepareMethods: 'LaneDefense.EditorTools.QuestProjectSetup.ConfigureAll' threw System.InvalidOperationException: OpenXR settings for Android not available; is the Android module installed?
+  at LaneDefense.EditorTools.QuestProjectSetup.ConfigureXR () [0x00147] in /github/workspace/unity/Assets/_Project/Editor/Quest/QuestProjectSetup.cs:98 
+  at LaneDefense.EditorTools.QuestProjectSetup.ConfigureAll () [0x00007] in /github/workspace/unity/Assets/_Project/Editor/Quest/QuestProjectSetup.cs:46 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <fe1d7a670f4f4d078f963f4439913bcb>:0 
+  ----> System.InvalidOperationException : OpenXR settings for Android not available; is the Android module installed?]]></message>
+                <stack-trace><![CDATA[  at VRTestKit.VRTestPrepare.InvokeAll (System.Collections.Generic.IEnumerable`1[T] methods) [0x00114] in /github/workspace/unity/Assets/_Project/Runtime/VRTest/VRTestPrepare.cs:34 
+  at VRTestKit.Tests.ProjectAuditTests.QuestProjectSettings_HaveNoFailures () [0x0000c] in /github/workspace/unity/Assets/_Project/Tests/Editor/VRTest/ProjectAuditTests.cs:15 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <fe1d7a670f4f4d078f963f4439913bcb>:0 
+--InvalidOperationException
+  at LaneDefense.EditorTools.QuestProjectSetup.ConfigureXR () [0x00147] in /github/workspace/unity/Assets/_Project/Editor/Quest/QuestProjectSetup.cs:98 
+  at LaneDefense.EditorTools.QuestProjectSetup.ConfigureAll () [0x00007] in /github/workspace/unity/Assets/_Project/Editor/Quest/QuestProjectSetup.cs:46 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <fe1d7a670f4f4d078f963f4439913bcb>:0 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[OpenXR loader assigned for Android: True (loaders: OpenXRLoader)
+<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: /root/.config/unity3d/PaidSonGo/LaneDefenseVR/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
