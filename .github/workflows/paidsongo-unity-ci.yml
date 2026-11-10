@@ -89,6 +89,19 @@ jobs:
           [ -n "$UNITY_EMAIL" ] || missing="$missing UNITY_EMAIL"
           [ -n "$UNITY_PASSWORD" ] || missing="$missing UNITY_PASSWORD"
           if [ -n "$missing" ]; then echo "::error title=Unity NOT VERIFIED::Missing secrets:$missing"; exit 1; fi
+      - name: Reclaim runner disk before large Unity Android editor image
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=== BEFORE ==="
+          df -h /
+          free -h
+          # Editor + Android toolchain runs in GameCI Docker; preinstalled host SDKs are unused.
+          # This is runner-local cleanup, NOT removal of any project's Unity/Android SDK.
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /opt/hostedtoolcache/CodeQL /usr/local/share/powershell || true
+          echo "=== AFTER ==="
+          df -h /
+          free -h
       - uses: actions/checkout@v4
         with:
           repository: PaidSonGo/Unity
@@ -105,6 +118,7 @@ jobs:
           projectPath: unity
           testMode: editmode
           customImage: unityci/editor:ubuntu-6000.6.0f1-android-3
+          customParameters: -job-worker-count 2 -gc-helper-count 1
           artifactsPath: test-results
       - name: Summarize results (fails on zero executed tests)
         if: always()
@@ -169,6 +183,7 @@ jobs:
           projectPath: unity
           targetPlatform: Android
           androidExportType: androidPackage
+          customParameters: -job-worker-count 2 -gc-helper-count 1
           buildMethod: ${{ needs.target.outputs.m2 == 'true' && 'LaneDefense.EditorTools.QuestBuild.BuildM2Apk' || 'LaneDefense.EditorTools.QuestBuild.BuildApk' }}
           buildName: ${{ needs.target.outputs.m2 == 'true' && 'FaunaM2Sandbox' || 'LaneDefenseVR' }}
       - name: Require an APK
