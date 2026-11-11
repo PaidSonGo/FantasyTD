@@ -20,6 +20,10 @@ if [ "$mode" = start ]; then
   fi
   sudo -n cat "$trace/events/signal/signal_generate/format" > "$out/signal-format.txt"
   echo 'sig == 9' | sudo -n tee "$trace/events/signal/signal_generate/filter" > /dev/null
+  # Native user call sites help distinguish a runtime abort from an external killer.
+  for option in userstacktrace sym-userobj sym-addr; do
+    echo 1 | sudo -n tee "$trace/options/$option" > /dev/null || true
+  done
   echo 1 | sudo -n tee "$trace/events/signal/signal_generate/enable" > /dev/null
   echo 1 | sudo -n tee "$trace/tracing_on" > /dev/null
   # At most 2 MiB; only SIGKILL events are enabled in this separate instance.

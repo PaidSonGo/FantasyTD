@@ -101,7 +101,11 @@ def report(out, workspace):
     events = read(out / 'docker-events.jsonl')
     notice('Fauna Docker OOM/die events', events[-4000:])
     notice('Fauna SIGKILL trace control', read(out / 'signal-control.txt'))
-    notice('Fauna SIGKILL sender and target', read(out / 'sigkill-trace.txt')[-4500:])
+    signals = read(out / 'sigkill-trace.txt').splitlines()
+    notice('Fauna SIGKILL sender and target', '\n'.join(line for line in signals if 'signal_generate:' in line)[-4500:] or 'No signal events available')
+    for i, line in enumerate(signals):
+        if 'signal_generate:' in line and 'comm=Unity' in line:
+            notice('Fauna Unity native SIGKILL call site', '\n'.join(signals[i:i+22]))
     start = int(rows[0]['time']) if rows else int(time.time())
     kernel = command(['sudo', '-n', 'journalctl', '-k', '--since', '@%s' % start, '--no-pager'])
     oom = [line for line in kernel.splitlines() if re.search(r'out of memory|oom-kill|Killed process|memory cgroup', line, re.I)]

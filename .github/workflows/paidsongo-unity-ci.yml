@@ -74,7 +74,9 @@ jobs:
   editmode:
     name: Unity compile + EditMode tests
     needs: target
-    runs-on: ubuntu-latest
+    # Unity 6000.6 supports Ubuntu 22.04/24.04. Do not silently migrate its host kernel
+    # with ubuntu-latest (now 26.04); run 43082906419 traced Unity self-SIGKILL at Mono reload.
+    runs-on: ubuntu-22.04
     timeout-minutes: 90
     env:
       # The existing account activation is the supported Personal route for ephemeral runners.
@@ -125,6 +127,7 @@ jobs:
           bash ci-host/.ci/fauna-signal-trace.sh start "$RUNNER_TEMP/fauna-diagnostics"
           nohup python3 ci-host/.ci/fauna-ci-diagnostics.py monitor --out "$RUNNER_TEMP/fauna-diagnostics" > "$RUNNER_TEMP/fauna-diagnostics/monitor.log" 2>&1 < /dev/null &
           echo "::notice title=Fauna runner::os=$RUNNER_OS arch=$RUNNER_ARCH cpus=$(nproc)"
+          echo "::notice title=Fauna host kernel and ASLR::$(uname -r) mmap_rnd_bits=$(cat /proc/sys/vm/mmap_rnd_bits)"
           free -h
           df -h /
       - name: Pull pinned Unity Android image before starting the Editor
@@ -190,7 +193,7 @@ jobs:
     name: Quest APK (QuestBuild.BuildApk)
     needs: [target, editmode]
     if: needs.target.outputs.apk == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 120
     env:
       # Same supported Personal account route and CLI as the passing EditMode stage.
@@ -225,6 +228,7 @@ jobs:
           bash ci-host/.ci/fauna-signal-trace.sh start "$RUNNER_TEMP/fauna-diagnostics"
           nohup python3 ci-host/.ci/fauna-ci-diagnostics.py monitor --out "$RUNNER_TEMP/fauna-diagnostics" > "$RUNNER_TEMP/fauna-diagnostics/monitor.log" 2>&1 < /dev/null &
           echo "::notice title=Fauna runner::os=$RUNNER_OS arch=$RUNNER_ARCH cpus=$(nproc)"
+          echo "::notice title=Fauna host kernel and ASLR::$(uname -r) mmap_rnd_bits=$(cat /proc/sys/vm/mmap_rnd_bits)"
           free -h
           df -h /
       - name: Pull pinned Unity Android image before starting the Editor
