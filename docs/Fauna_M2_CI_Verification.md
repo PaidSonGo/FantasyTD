@@ -1,13 +1,58 @@
-# Fauna M2 — CI resumed; fresh-import tests pass, APK publication being verified
+# Fauna M2 — build verified, APK publication BLOCKED
 
-## Current checkpoint (2026-11-11)
+## Latest checkpoint — 2026-11-11
 
-- Unity source / PR #10 HEAD: `1ec67f586a3eeca9466fa429bb640b365f90c6ee` — unchanged during this CI repair.
-- Unity 6000.6.0f1, [PR #10](https://github.com/PaidSonGo/Unity/pull/10), [CI PR #41](https://github.com/PaidSonGo/FantasyTD/pull/41). Both remain drafts; no merge.
-- Full **clean-import EditMode: 387 PASS / 0 FAIL**, 42.745 s, including **24/24 UI** and **5/5 M2 scene** cases, [run 43086150449 / test job](https://github.com/PaidSonGo/FantasyTD/actions/runs/43086150449/job/130751021085).
-- That run actually built `build/Android/FaunaM2Sandbox.apk` (~70 MiB): `QUEST_BUILD_RESULT Succeeded errors=0 warnings=14`. IL2CPP, ARM64, M2LivingReserve, `com.paidsongo.faunam2sandbox`; Quest scene/material/build/manifest guards passed. The CLI subsequently rejected the successful custom report and the upload was skipped. **No downloadable artifact for this source has yet been published.**
-- [Current controlled verification run 43092132765](https://github.com/PaidSonGo/FantasyTD/actions/runs/43092132765) is running full EditMode + APK from the exact same Unity SHA. Executed CI revision: `ff5a5528d4c5072579e0316032a4e7bd4a071882`.
-- Status: **UNITY_TESTED / APK_BUILT_BUT_NOT_PUBLISHED / CURRENT_CI_RUNNING / QUEST_UNVERIFIED**. This checkpoint is not a completion claim.
+**The delivery goal is NOT complete. There is no published APK artifact for the current source.**
+
+- Unity / PR #10 HEAD remains exactly `1ec67f586a3eeca9466fa429bb640b365f90c6ee`. No game, camera, input, model, package or design changes were made during this CI repair.
+- [Unity PR #10](https://github.com/PaidSonGo/Unity/pull/10), [FantasyTD CI PR #41](https://github.com/PaidSonGo/FantasyTD/pull/41); both drafts, no merge.
+- Unity **6000.6.0f1**, full cold-import EditMode: **387 PASS / 0 FAIL**, **47.075 s** in [run 43092132765 / test job 130771694333](https://github.com/PaidSonGo/FantasyTD/actions/runs/43092132765/job/130771694333). This includes **24/24 UI** and **5/5 M2 scene** cases. [Real XML/log artifact](https://github.com/PaidSonGo/FantasyTD/actions/runs/43092132765/artifacts/13890415984).
+- [APK job 130776291186](https://github.com/PaidSonGo/FantasyTD/actions/runs/43092132765/job/130776291186): **Build the licensed Quest APK with GameCI CLI — SUCCESS**. **Require an APK — SUCCESS**: the exact `build/Android/FaunaM2Sandbox.apk` existed and passed full ZIP CRC and ARM64 IL2CPP payload checks.
+- The diagnostic report failed, diagnostic upload failed, and APK upload failed. No `FaunaVsKosmici-Quest-apk` artifact appears in either the run or repository artifact API. The run API still reports `in_progress` despite its job steps (including Complete job) having completed. Do not present it as a completed green workflow.
+- Exact upload error text remains unavailable: the log connector returns `ReadTimeout`; a direct authenticated read follows GitHub to `productionresultssa3.blob.core.windows.net` and receives **403 Forbidden**, including with additional network access enabled. The APK checksum/manifest inspection could not be completed because no downloadable APK was published. Do not substitute the ZIP digest of the EditMode artifact for an APK digest.
+- Read-only log collector [43097953722](https://github.com/PaidSonGo/FantasyTD/actions/runs/43097953722) ended **startup_failure**, with no jobs. GitHub's own run page says: **“An unexpected error has occurred and we've been automatically notified”**, suggests checking Actions service health, request ID `191d9c78-de11-11f1-8295-d4aaf349dec4`. This is not a YAML error or evidence of a license/game failure.
+- One controlled read-only retry on pinned Ubuntu22.04, [43098571631](https://github.com/PaidSonGo/FantasyTD/actions/runs/43098571631), remains queued with no jobs at this checkpoint. It does not start Unity and does not cancel the main run. No further Unity build was dispatched.
+
+Status: **UNITY_TESTED / ANDROID_BUILD_SUCCEEDED / ARTIFACT_UPLOAD_FAILED / DELIVERY_BLOCKED / QUEST_UNVERIFIED**.
+
+## Changes prepared after the successful build
+
+The executed main workflow revision was `ff5a5528d4c5072579e0316032a4e7bd4a071882`. Its strict compatibility adapter removed the confirmed GameCI parser false failure. Its restrictive umask also propagated to Unity — an unintended regression I introduced. A new regression test failed with child umask0077 instead of0022, then passed after removing the global umask (mktemp itself already creates a private0600 log).
+
+- Fix `1e33ada3a6d9360dce7bf50655a3f8e74f84d3db`: preserve child permissions; tolerate unreadable diagnostic log files with a notice; publish the primary APK/test evidence before optional resource archives; cap optional diagnostic uploads at3min and make only those diagnostics nonblocking. Compilation, test totals, APK CRC and mandatory APK upload remain strict.
+- Read-only evidence runner `0181ba9ca216fa72e339441dc5091c1b373b2450`: pinned Ubuntu22.04,5min job limit; no Unity execution.
+- **7/7 local CI-adapter tests passed** after the fix. Bash syntax, YAML/embedded Python AST, artifact ordering, timeouts, strictness of core gates, and git diff checks passed. These are CI fixture tests, not Unity or headset tests.
+- The latest CI configuration has **not** completed an end-to-end verification run after these last fixes. The exact exception in the failed diagnostic step is still unconfirmed because its log cannot be retrieved. The umask regression is independently reproduced; do not conflate that finding with proof of the upload service's root cause.
+- FantasyTD is public. No paid runner/service, spending limit, license secret, RAM/swap cap or ASLR setting was changed.
+
+## Best free compilation alternative
+
+Use an already licensed **local Unity6000.6.0f1** with Android Build Support, its SDK/NDK/OpenJDK, on the owner's workstation. Use the **PaidSonGo/Unity root**, not FantasyTD/UnityProject. Verify that `git rev-parse HEAD` equals the full Unity SHA above and that no game changes are uncommitted. A clean clone avoids the restored-Library issue. This reuses the existing M2 generators/build guards; it does not recreate any game system.
+
+Set `FAUNA_UNITY_EDITOR` to the real installed Editor executable, `FAUNA_PROJECT` to that checkout, and `FAUNA_OUTPUT` to an existing absolute output directory. Then run (POSIX shell syntax; the same Unity arguments work with Unity.exe in PowerShell):
+
+```bash
+"$FAUNA_UNITY_EDITOR" -batchmode -nographics -projectPath "$FAUNA_PROJECT" \
+  -runTests -testPlatform EditMode -testResults "$FAUNA_OUTPUT/editmode.xml" \
+  -logFile "$FAUNA_OUTPUT/editmode.log"
+
+"$FAUNA_UNITY_EDITOR" -batchmode -nographics -buildTarget Android \
+  -projectPath "$FAUNA_PROJECT" \
+  -executeMethod LaneDefense.EditorTools.QuestBuild.BuildM2Apk \
+  -customBuildPath "$FAUNA_OUTPUT/FaunaM2Sandbox.apk" \
+  -logFile "$FAUNA_OUTPUT/android.log"
+```
+
+The first command must finish with nonzero executed tests and zero failures. The second must log `QUEST_BUILD_RESULT Succeeded`, exit0 and produce the actual nonempty APK. Check its manifest/ARM64/IL2CPP/OpenXR and SHA256 locally; do not rely on log wording alone. This path avoids GitHub's artifact service and the CLI reporter parser.
+
+**Not executed here:** there is no local Editor binary in this workspace; UnityMCP get_active returns SSE429. Cloud browser access is unavailable, and connected local Browser tools were not callable. No local build, real screenshot, APK download or physical Quest test is claimed.
+
+## Handoff / next action for Claude
+
+1. Read the existing run43092132765 and its artifacts again after GitHub recovers; do not dispatch a competing Unity run while it still appears active. Check the read-only collector43098571631 for bounded failure messages if it starts.
+2. If a current APK artifact finally appears, inspect it via existing `fauna-evidence.yml`, `apk=true`, `run=43092132765` — no Unity rebuild. Verify actual filename, checksum, namespace, head-tracking/category and native binaries.
+3. If uploads definitively failed and no artifact can be recovered, first resolve the actual GitHub upload/startup error (do not assume OOM, licensing, quota or payment), then perform one controlled full workflow from the current CI branch for the exact Unity SHA. All game/UI implementation is already present; do not recreate it.
+4. Use the local licensed build alternative if Actions infrastructure remains unavailable. Quest3 ergonomics, input, camera/comfort, rendering and72FPS remain a separate physical test.
 
 ## Diagnosed failures and focused changes
 
@@ -17,13 +62,13 @@
 | [43082906419](https://github.com/PaidSonGo/FantasyTD/actions/runs/43082906419) | Host signal trace `f4f4444`. `Unity Main Thre-3623 … signal_generate: sig=9 code=0 comm=Unity Main Thre pid=3623`. | **Unity itself sent SIGKILL to its own PID.** Last sampled peak ~0.85 GB / 15.92 GB, OOM counters zero. No test executed. |
 | [43084277016](https://github.com/PaidSonGo/FantasyTD/actions/runs/43084277016) | `441d088`: pin Unity jobs to supported Ubuntu 22.04 instead of migrating ubuntu-latest/26.04. Same Library restored. | Still failed at native Mono reload. OS pin alone did **not** fix startup. |
 | [43086150449](https://github.com/PaidSonGo/FantasyTD/actions/runs/43086150449) | `758573c`: no Library restore in either Unity job; trace snapshot/control and native maps. | Fresh tests 387/387; separate fresh Android import + build **Succeeded, 0 errors, 14 warnings**. No Editor self-SIGKILL in either job. CLI post-build parser failed; APK upload skipped. |
-| [43092132765](https://github.com/PaidSonGo/FantasyTD/actions/runs/43092132765) | `ff5a552`: strict report compatibility adapter plus exact APK/CRC/ARM64 guard and candidate retention. | In progress; final result must be checked. |
+| [43092132765](https://github.com/PaidSonGo/FantasyTD/actions/runs/43092132765) | `ff5a552`: strict report compatibility adapter plus exact APK/CRC/ARM64 guard and candidate retention. | Fresh EditMode **387/387 (47.075 s)**; CLI build **SUCCESS**; exact APK/CRC/ARM64 gate **SUCCESS**. Diagnostic reporting and both uploads failed; no APK artifact. API run state still in progress at checkpoint. |
 
 The restored-Library issue is intermittent: older restored starts also passed. The exact internal Unity call and triggering Library subtree were not isolated. Clean imports eliminated the reproduced early failure in both jobs of run 43086150449; the cache remains disabled. The kernel trace establishes the SIGKILL sender, not the reason inside Unity. [An independent related cache report](https://github.com/evenflow58/Dungeon-Keeper/issues/118) is corroborating context, not proof about this project.
 
 The observed post-build failure is exact: CLI v0.1.73 `UnityBuildValidation.validateBuild` accepts `Build succeeded!` or its own `# Build results #` banner. Our existing custom builder reports `QUEST_BUILD_RESULT Succeeded …`; GameCI's shell prints `Build succeeded` without the exclamation mark. Unity exited 0, produced the file, and returned its entitlement license before the CLI threw its parser error.
 
-`.ci/fauna-gameci-build-log.sh` uses the official `ENGINE_LAUNCH_WRAPPER` hook. It preserves Editor/tee failures and emits the parser's expected banner only when the Quest report says Succeeded/zero errors, the Editor exited 0, and the expected APK is nonempty. Activation/return calls cannot fabricate a build report. **6/6 local adapter boundary tests passed** (shell fixtures, not Unity tests), including exit137, failed report, nonzero errors, missing APK and license-only invocation.
+`.ci/fauna-gameci-build-log.sh` uses the official `ENGINE_LAUNCH_WRAPPER` hook. It preserves Editor/tee failures and emits the parser's expected banner only when the Quest report says Succeeded/zero errors, the Editor exited 0, and the expected APK is nonempty. Activation/return calls cannot fabricate a build report. **7/7 local adapter boundary tests passed** (shell fixtures, not Unity tests), including exit137, failed report, nonzero errors, missing APK and license-only invocation.
 
 The package step checks the exact M2 filename, ZIP CRC and ARM64 IL2CPP payload. It can retain a valid candidate after a post-build tool failure without turning the failed job green. Existing `fauna-evidence.yml` has an `apk=true` mode to download an existing artifact on a GitHub runner, check aapt manifest/package/VR head tracking and category, ARM64/IL2CPP/OpenXR, CRC and the actual APK SHA-256. That inspection never starts Unity or rebuilds the project.
 
