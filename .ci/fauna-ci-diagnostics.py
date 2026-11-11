@@ -91,6 +91,9 @@ def report(out, workspace):
     seen = {}
     for row in rows + [final]:
         for c in row['containers']:
+            previous = seen.get(c['id'], {})
+            if 'cgroup' not in c and 'cgroup' in previous:
+                c['cgroup'] = previous['cgroup']
             seen[c['id']] = c
     for c in seen.values():
         notice('Fauna Docker limits and cgroup evidence', json.dumps(c))
@@ -109,7 +112,7 @@ def report(out, workspace):
         for line in Path(name).read_text(errors='replace').splitlines():
             if re.search(r'error CS\d+|Compilation failed|Scripts have compiler errors|SIGKILL|out of memory|fatal error', line, re.I):
                 errors.append(line[:900])
-            if re.search(r'Start importing |Importing asset|RefreshInfo:|AssetImportWorker|Test Run Summary|Build completed', line):
+            if re.search(r'Start importing |Importing asset|RefreshInfo:|AssetImportWorker|Test Run Summary|Build completed|M2_UI_RENDER_|M2_UI_FONT', line):
                 phases.append(line[:500])
     for line in errors[-12:]:
         notice('Fauna Unity failure evidence', line)
