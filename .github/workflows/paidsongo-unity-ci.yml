@@ -137,7 +137,7 @@ jobs:
           projectPath: unity
           testMode: editmode
           customImage: unityci/editor:ubuntu-6000.6.0f1-android-3
-          customParameters: -job-worker-count 2 -gc-helper-count 1
+          customParameters: -nographics -job-worker-count 2 -gc-helper-count 1
           artifactsPath: test-results
       - name: Publish bounded resource and Unity failure evidence
         if: always()
