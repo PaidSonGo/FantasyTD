@@ -1,0 +1,26 @@
+name: Fauna inspect existing CI evidence
+on:
+  workflow_dispatch:
+    inputs:
+      run:
+        required: true
+        description: Existing Fauna workflow run ID (no Unity rerun)
+permissions:
+  actions: read
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .ci
+      - name: Inspect existing test logs without rerunning Unity
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.run }}
+        run: |
+          set -euo pipefail
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]]
+          gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --name editmode-results --dir test-results
+          python3 .ci/fauna-ci-diagnostics.py report --out "$RUNNER_TEMP/evidence" --workspace "$GITHUB_WORKSPACE"

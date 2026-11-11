@@ -104,14 +104,15 @@ def report(out, workspace):
     oom = [line for line in kernel.splitlines() if re.search(r'out of memory|oom-kill|Killed process|memory cgroup', line, re.I)]
     notice('Fauna kernel OOM evidence', '\n'.join(oom[-12:]) or 'No matching kernel entries; absence alone does not establish the cause of SIGKILL.')
     logs = []
-    for pattern in ('test-results/**/*.log', 'unity/Logs/**/*.log', 'build/**/*.log'):
+    for pattern in ('test-results/**/*.log', 'test-results/**/*.txt', 'unity/Logs/**/*.log', 'build/**/*.log'):
         logs.extend(glob.glob(str(workspace / pattern), recursive=True))
+    notice('Fauna inspected logs', '\n'.join(str(Path(n).relative_to(workspace)) for n in logs) or 'No log files found')
     errors = []
     phases = []
     for name in logs:
         for line in Path(name).read_text(errors='replace').splitlines():
-            if re.search(r'error CS\d+|Compilation failed|Scripts have compiler errors|SIGKILL|out of memory|fatal error', line, re.I):
-                errors.append(line[:900])
+            if re.search(r'error CS\d+|Compilation failed|Scripts have compiler errors|SIGKILL|out of memory|fatal error|licens.*(fail|error|unavailable|invalid)|activation.*(fail|error)|Aborting|Failed to|Exception:|Error:', line, re.I):
+                errors.append(re.sub(r'[A-Za-z0-9_.+-]+@[A-Za-z0-9.-]+', '[redacted-email]', line[:900]))
             if re.search(r'Start importing |Importing asset|RefreshInfo:|AssetImportWorker|Test Run Summary|Build completed|M2_UI_RENDER_|M2_UI_FONT', line):
                 phases.append(line[:500])
     for line in errors[-12:]:
