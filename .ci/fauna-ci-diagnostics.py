@@ -140,7 +140,7 @@ def report(out, workspace):
                 graphics.append(re.sub(r'[A-Za-z0-9_.+-]+@[A-Za-z0-9.-]+', '[redacted-email]', line[:500]))
             if re.search(r'Licensing::|[Aa]ctivat|[Aa]bort|[Ee]xit|[Bb]atchmode|[Dd]isplay|[Ee]ntitlement|[Tt]imeout|[Cc]onnect.*(fail|error)|[Ii]nvalid|[Ee]rror', line) and not re.search(r'password|serial|session|token|signature|command line|machine|user.?name|user.?id|email', line, re.I):
                 startup.append(re.sub(r'[A-Za-z0-9_.+-]+@[A-Za-z0-9.-]+', '[redacted-email]', line[:500]))
-            if re.search(r'Start importing |Importing asset|RefreshInfo:|AssetImportWorker|Test Run Summary|Build completed|M2_UI_RENDER_|M2_UI_FONT', line):
+            if re.search(r'Unable to load font face|M2_UI_FONT|Start importing |Importing asset|RefreshInfo:|AssetImportWorker|Test Run Summary|Build completed|M2_UI_RENDER_|M2_UI_FONT', line):
                 phases.append(line[:500])
     notice('Fauna Unity graphics and project status', '\n'.join(graphics[-30:]) or 'No matching status')
     notice('Fauna Unity startup status', '\n'.join(startup[-25:]) or 'No matching startup status')
