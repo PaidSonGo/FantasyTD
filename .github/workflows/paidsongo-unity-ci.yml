@@ -254,6 +254,9 @@ jobs:
       - name: Build the licensed Quest APK with GameCI CLI
         shell: bash
         env:
+          # The official CLI only recognizes its own result banner. Our adapter emits it
+          # after the custom Quest report succeeds with exit 0 and a real APK exists.
+          ENGINE_LAUNCH_WRAPPER: bash /github/workspace/ci-host/.ci/fauna-gameci-build-log.sh
           FAUNA_BUILD_METHOD: ${{ needs.target.outputs.m2 == 'true' && 'LaneDefense.EditorTools.QuestBuild.BuildM2Apk' || 'LaneDefense.EditorTools.QuestBuild.BuildApk' }}
           FAUNA_BUILD_NAME: ${{ needs.target.outputs.m2 == 'true' && 'FaunaM2Sandbox' || 'LaneDefenseVR' }}
         run: |
@@ -277,13 +280,26 @@ jobs:
           path: ${{ runner.temp }}/fauna-diagnostics
           retention-days: 14
       - name: Require an APK
+        id: package_apk
+        if: ${{ !cancelled() }}
         shell: bash
+        env:
+          EXPECTED_APK: ${{ needs.target.outputs.m2 == 'true' && 'build/Android/FaunaM2Sandbox.apk' || 'build/Android/LaneDefenseVR.apk' }}
         run: |
-          apk=$(find . -name '*.apk' -not -path './unity/Library/*' | head -1)
-          [ -n "$apk" ] || { echo "::error title=APK missing::No .apk produced"; exit 1; }
-          mkdir -p apk-out && cp "$apk" apk-out/
+          set -euo pipefail
+          [ -s "$EXPECTED_APK" ] || { echo "::error title=APK missing::Expected APK was not produced"; exit 1; }
+          python3 - <<'PY'
+          import os, zipfile
+          with zipfile.ZipFile(os.environ['EXPECTED_APK']) as apk:
+              assert apk.testzip() is None, 'APK CRC validation failed'
+              assert 'lib/arm64-v8a/libil2cpp.so' in apk.namelist(), 'ARM64 IL2CPP binary missing'
+          PY
+          mkdir -p apk-out && cp "$EXPECTED_APK" apk-out/
           ls -la apk-out; sha256sum apk-out/*.apk | tee -a "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
+        # Preserve a valid candidate if a post-build tool rejects the result; the job
+        # still fails in that case. Never turn a failed build step into a green job.
+        if: ${{ !cancelled() && steps.package_apk.outcome == 'success' }}
         with:
           name: FaunaVsKosmici-Quest-apk
           path: apk-out
