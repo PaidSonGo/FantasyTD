@@ -110,14 +110,18 @@ def report(out, workspace):
     errors = []
     phases = []
     startup = []
+    graphics = []
     for name in logs:
         for line in Path(name).read_text(errors='replace').splitlines():
             if re.search(r'error CS\d+|Compilation failed|Scripts have compiler errors|SIGKILL|out of memory|fatal error|licens.*(fail|error|unavailable|invalid)|activation.*(fail|error)|Aborting|Failed to|Exception:|Error:', line, re.I):
                 errors.append(re.sub(r'[A-Za-z0-9_.+-]+@[A-Za-z0-9.-]+', '[redacted-email]', line[:900]))
+            if re.search(r'Receiving|SIG[A-Z]|[Ss]tacktrace|[Nn]ative [Ss]tack|[Ff]atal|[Aa]borted|[Kk]illed|[Ss]egmentation|[Gg]raphics|Gfx|Vulkan|[Cc]rash|[Ll]oading|Initialize|[Uu]nrecognized|[Ff]ailed|[Rr]efresh|[Pp]roject|[Cc]ommand.*(invalid|incorrect)|[Ee]xception', line) and not re.search(r'password|serial|session|token|signature|command line|machine|user.?name|user.?id|email', line, re.I):
+                graphics.append(re.sub(r'[A-Za-z0-9_.+-]+@[A-Za-z0-9.-]+', '[redacted-email]', line[:500]))
             if re.search(r'Licensing::|[Aa]ctivat|[Aa]bort|[Ee]xit|[Bb]atchmode|[Dd]isplay|[Ee]ntitlement|[Tt]imeout|[Cc]onnect.*(fail|error)|[Ii]nvalid|[Ee]rror', line) and not re.search(r'password|serial|session|token|signature|command line|machine|user.?name|user.?id|email', line, re.I):
                 startup.append(re.sub(r'[A-Za-z0-9_.+-]+@[A-Za-z0-9.-]+', '[redacted-email]', line[:500]))
             if re.search(r'Start importing |Importing asset|RefreshInfo:|AssetImportWorker|Test Run Summary|Build completed|M2_UI_RENDER_|M2_UI_FONT', line):
                 phases.append(line[:500])
+    notice('Fauna Unity graphics and project status', '\n'.join(graphics[-30:]) or 'No matching status')
     notice('Fauna Unity startup status', '\n'.join(startup[-25:]) or 'No matching startup status')
     for line in errors[-12:]:
         notice('Fauna Unity failure evidence', line)
