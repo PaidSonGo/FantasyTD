@@ -230,7 +230,19 @@ jobs:
           docker pull unityci/editor:ubuntu-6000.6.0f1-android-3
           docker image inspect unityci/editor:ubuntu-6000.6.0f1-android-3 --format '::notice title=Fauna Unity image::id={{.Id}} size={{.Size}} digests={{json .RepoDigests}}'
       - name: Install the same pinned official GameCI CLI used by the test runner
-        uses: game-ci/cli@v0.1.73
+        # game-ci/cli@v0.1.73's action runs scripts/install.sh directly although the file is git mode 100644
+        # (exit 126, run 43077272338). Run the same pinned installer through bash instead; it resolves the
+        # v0.1.73 release asset and verifies its checksum, then prints the binary path.
+        shell: bash
+        run: |
+          set -euo pipefail
+          src="$RUNNER_TEMP/gameci-cli-src"
+          git clone --quiet --depth 1 --branch v0.1.73 https://github.com/game-ci/cli "$src"
+          bin=$(bash "$src/scripts/install.sh" v0.1.73 "$RUNNER_TEMP/gameci-cli")
+          [ -x "$bin" ] || chmod +x "$bin"
+          echo "$(dirname "$bin")" >> "$GITHUB_PATH"
+          "$bin" --help > /dev/null 2>&1 || "$bin" help > /dev/null 2>&1 || true
+          echo "::notice title=GameCI CLI::installed $bin"
       - name: Build the licensed Quest APK with GameCI CLI
         shell: bash
         env:
