@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   target:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       ref: ${{ steps.config.outputs.ref }}
     steps:
@@ -36,7 +36,7 @@ jobs:
   tests:
     name: Phone simulator - Unity compilation + EditMode
     needs: target
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     env:
       UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -65,7 +65,7 @@ jobs:
           projectPath: unity
           testMode: editmode
           customImage: unityci/editor:ubuntu-6000.6.0f1-android-3
-          customParameters: -job-worker-count 2 -gc-helper-count 1
+          customParameters: -job-worker-count 1 -gc-helper-count 1
           artifactsPath: test-results
       - name: Require and summarize executed test results
         if: always()
@@ -95,7 +95,7 @@ jobs:
   apk:
     name: Build phone simulator APK
     needs: [target, tests]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 120
     env:
       UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -123,7 +123,7 @@ jobs:
           androidExportType: androidPackage
           buildMethod: LaneDefense.EditorTools.M2PhoneSimBuild.BuildPhoneApk
           buildName: FaunaM2PhoneSim
-          customParameters: -job-worker-count 2 -gc-helper-count 1
+          customParameters: -job-worker-count 1 -gc-helper-count 1
       - name: Verify phone installer
         run: |
           set -euo pipefail
