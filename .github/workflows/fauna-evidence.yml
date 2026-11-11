@@ -64,8 +64,12 @@ jobs:
           assert "package: name='com.paidsongo.faunam2sandbox'" in badging, badging[:500]
           assert "uses-feature: name='android.hardware.vr.headtracking'" in badging, badging
           assert 'com.oculus.intent.category.VR' in manifest, 'VR launch category missing'
+          digest = hashlib.sha256()
+          with apk.open('rb') as stream:
+              for chunk in iter(lambda: stream.read(1024 * 1024), b''):
+                  digest.update(chunk)
           evidence = {'file': apk.name, 'bytes': apk.stat().st_size,
-                      'sha256': hashlib.file_digest(apk.open('rb'), 'sha256').hexdigest(),
+                      'sha256': digest.hexdigest(),
                       'package': 'com.paidsongo.faunam2sandbox', 'abis': abis,
                       'il2cpp': True, 'openxrLibraries': xr, 'requiredHeadTracking': True,
                       'vrLaunchCategory': True}
