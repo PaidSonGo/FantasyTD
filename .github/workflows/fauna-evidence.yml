@@ -87,7 +87,9 @@ jobs:
           import os, pathlib, re
           lines = (pathlib.Path(os.environ['RUNNER_TEMP']) / 'job-evidence.log').read_text(errors='replace').splitlines()
           exclude = r'password|serial|session|token|signature|command line|machine|user.?name|user.?id|email'
-          relevant = [x[:650] for x in lines if re.search(r'error|exception|EACCES|permission|upload|artifact|failed|traceback|File ".*fauna', x, re.I) and not re.search(exclude, x, re.I)]
+          # JSON parser errors say "Unexpected token"; keep that diagnostic while
+          # continuing to exclude credential/token log lines.
+          relevant = [x[:650] for x in lines if re.search(r'error|exception|EACCES|permission|upload|artifact|failed|traceback|File ".*fauna', x, re.I) and not re.search(exclude, x.replace('Unexpected token', 'Unexpected JSON character'), re.I)]
           for line in relevant[-30:]:
               print('::notice title=Fauna existing job evidence::' + line.replace('%','%25').replace('\r','%0D').replace('\n','%0A'))
           print('::notice title=Fauna existing job log size::' + str(len(lines)) + ' lines')
