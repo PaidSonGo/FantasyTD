@@ -9,6 +9,10 @@ on:
         type: boolean
         default: false
         description: Inspect the existing APK artifact instead of failed test logs (no Unity rerun)
+      job:
+        required: false
+        default: ''
+        description: Read bounded failure evidence from this job ID (no artifact or Unity required)
 permissions:
   actions: read
   contents: read
@@ -20,7 +24,7 @@ jobs:
         with:
           sparse-checkout: .ci
       - name: Inspect existing test logs without rerunning Unity
-        if: inputs.apk != true
+        if: inputs.apk != true && inputs.job == ''
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_ID: ${{ inputs.run }}
@@ -31,7 +35,7 @@ jobs:
           gh run view "$RUN_ID" --repo "$GITHUB_REPOSITORY" --log-failed > test-results/action.log
           python3 .ci/fauna-ci-diagnostics.py report --out "$RUNNER_TEMP/evidence" --workspace "$GITHUB_WORKSPACE"
       - name: Download the existing APK and inspect its manifest and native binaries
-        if: inputs.apk == true
+        if: inputs.apk == true && inputs.job == ''
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_ID: ${{ inputs.run }}
@@ -68,4 +72,22 @@ jobs:
           with open('apk-evidence/inspection.json', 'w') as f:
               json.dump(evidence, f, indent=2)
           print(badging)
+          PY
+      - name: Read bounded evidence from an existing job log
+        if: inputs.job != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JOB_ID: ${{ inputs.job }}
+        run: |
+          set -euo pipefail
+          [[ "$JOB_ID" =~ ^[0-9]+$ ]]
+          timeout 90s gh api "repos/$GITHUB_REPOSITORY/actions/jobs/$JOB_ID/logs" > "$RUNNER_TEMP/job-evidence.log"
+          python3 - <<'PY'
+          import os, pathlib, re
+          lines = (pathlib.Path(os.environ['RUNNER_TEMP']) / 'job-evidence.log').read_text(errors='replace').splitlines()
+          exclude = r'password|serial|session|token|signature|command line|machine|user.?name|user.?id|email'
+          relevant = [x[:650] for x in lines if re.search(r'error|exception|EACCES|permission|upload|artifact|failed|traceback|File ".*fauna', x, re.I) and not re.search(exclude, x, re.I)]
+          for line in relevant[-30:]:
+              print('::notice title=Fauna existing job evidence::' + line.replace('%','%25').replace('\r','%0D').replace('\n','%0A'))
+          print('::notice title=Fauna existing job log size::' + str(len(lines)) + ' lines')
           PY
