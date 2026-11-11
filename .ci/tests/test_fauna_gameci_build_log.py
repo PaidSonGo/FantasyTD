@@ -18,12 +18,17 @@ class BuildLogAdapterTests(unittest.TestCase):
                 output.parent.mkdir(parents=True)
                 output.write_bytes(b'APK test fixture, not a game build')
             child = root / 'editor-fixture.sh'
-            child.write_text('printf "%s\\n" "$FAUNA_TEST_REPORT"\nexit "$FAUNA_TEST_EXIT"\n')
+            child.write_text('printf "CHILD_UMASK=%s\\n" "$(umask)"\nprintf "%s\\n" "$FAUNA_TEST_REPORT"\nexit "$FAUNA_TEST_EXIT"\n')
             env = {**os.environ, 'GITHUB_WORKSPACE': folder, 'BUILD_PATH': 'build/Android',
                    'BUILD_FILE': output.name, 'FAUNA_TEST_REPORT': report,
                    'FAUNA_TEST_EXIT': str(exit_code)}
             return subprocess.run(['bash', str(ADAPTER), 'bash', str(child)],
-                                  env=env, text=True, capture_output=True)
+                                  env=env, text=True, capture_output=True, umask=0o022)
+
+    def test_child_keeps_caller_permissions_for_host_readable_build_logs(self):
+        result = self.invoke('License-only invocation')
+        self.assertEqual(0, result.returncode)
+        self.assertIn('CHILD_UMASK=0022', result.stdout)
 
     def test_success_requires_report_editor_zero_and_apk(self):
         result = self.invoke('QUEST_BUILD_RESULT Succeeded errors=0 warnings=14 size=123 path=build.apk')

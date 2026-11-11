@@ -147,16 +147,11 @@ jobs:
           artifactsPath: test-results
       - name: Publish bounded resource and Unity failure evidence
         if: always()
+        continue-on-error: true
         shell: bash
         run: |
           bash ci-host/.ci/fauna-signal-trace.sh stop "$RUNNER_TEMP/fauna-diagnostics"
           python3 ci-host/.ci/fauna-ci-diagnostics.py report --out "$RUNNER_TEMP/fauna-diagnostics" --workspace "$GITHUB_WORKSPACE"
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: fauna-resource-diagnostics-${{ github.job }}
-          path: ${{ runner.temp }}/fauna-diagnostics
-          retention-days: 14
       - name: Summarize results (fails on zero executed tests)
         if: always()
         shell: bash
@@ -182,11 +177,23 @@ jobs:
           if failed:
               sys.exit(1)
           PY
-      - uses: actions/upload-artifact@v4
+      - name: Publish EditMode evidence
+        uses: actions/upload-artifact@v4
         if: always()
+        timeout-minutes: 10
         with:
           name: editmode-results
           path: test-results
+          retention-days: 14
+
+      - name: Upload optional resource diagnostics
+        uses: actions/upload-artifact@v4
+        if: always()
+        timeout-minutes: 3
+        continue-on-error: true
+        with:
+          name: fauna-resource-diagnostics-${{ github.job }}
+          path: ${{ runner.temp }}/fauna-diagnostics
           retention-days: 14
 
   quest-apk:
@@ -269,16 +276,11 @@ jobs:
             --customParameters="-batchmode -nographics -job-worker-count 2 -gc-helper-count 1"
       - name: Publish bounded resource and Unity failure evidence
         if: always()
+        continue-on-error: true
         shell: bash
         run: |
           bash ci-host/.ci/fauna-signal-trace.sh stop "$RUNNER_TEMP/fauna-diagnostics"
           python3 ci-host/.ci/fauna-ci-diagnostics.py report --out "$RUNNER_TEMP/fauna-diagnostics" --workspace "$GITHUB_WORKSPACE"
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: fauna-resource-diagnostics-${{ github.job }}
-          path: ${{ runner.temp }}/fauna-diagnostics
-          retention-days: 14
       - name: Require an APK
         id: package_apk
         if: ${{ !cancelled() }}
@@ -296,11 +298,22 @@ jobs:
           PY
           mkdir -p apk-out && cp "$EXPECTED_APK" apk-out/
           ls -la apk-out; sha256sum apk-out/*.apk | tee -a "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - name: Publish verified Quest APK
+        uses: actions/upload-artifact@v4
+        timeout-minutes: 10
         # Preserve a valid candidate if a post-build tool rejects the result; the job
         # still fails in that case. Never turn a failed build step into a green job.
         if: ${{ !cancelled() && steps.package_apk.outcome == 'success' }}
         with:
           name: FaunaVsKosmici-Quest-apk
           path: apk-out
+          retention-days: 14
+      - name: Upload optional resource diagnostics
+        uses: actions/upload-artifact@v4
+        if: always()
+        timeout-minutes: 3
+        continue-on-error: true
+        with:
+          name: fauna-resource-diagnostics-${{ github.job }}
+          path: ${{ runner.temp }}/fauna-diagnostics
           retention-days: 14

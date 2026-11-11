@@ -154,7 +154,11 @@ def report(out, workspace):
     startup = []
     graphics = []
     for name in logs:
-        log_lines=Path(name).read_text(errors='replace').splitlines()
+        try:
+            log_lines=Path(name).read_text(errors='replace').splitlines()
+        except OSError as exc:
+            notice('Fauna unreadable diagnostic log', str(Path(name).relative_to(workspace)) + ': ' + type(exc).__name__)
+            continue
         for index,line in enumerate(log_lines):
             if re.search(r'(^|\s)Killed$', line):
                 context=[x[:650] for x in log_lines[max(0,index-6):index+8] if not re.search(r'password|serial|session|token|signature|command line|machine|user.?name|user.?id|email|ulf',x,re.I)]

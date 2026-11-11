@@ -3,7 +3,8 @@
 # Adapt only a successful Quest BuildReport + Editor exit 0 + a nonempty APK.
 # License activation/return invocations have no Quest report and pass through unchanged.
 set -uo pipefail
-umask 077
+# mktemp creates a private 0600 log; preserve the caller's umask for Unity's
+# generated files, which later host steps must be able to read.
 log=$(mktemp /tmp/fauna-unity-build.XXXXXX)
 trap 'rm -f -- "$log"' EXIT
 "$@" 2>&1 | tee "$log"
