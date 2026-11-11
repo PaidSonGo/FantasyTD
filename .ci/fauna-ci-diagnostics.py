@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import subprocess
 import time
+import xml.etree.ElementTree as ET
 
 
 def command(args, timeout=15):
@@ -103,6 +104,22 @@ def report(out, workspace):
     kernel = command(['sudo', '-n', 'journalctl', '-k', '--since', '@%s' % start, '--no-pager'])
     oom = [line for line in kernel.splitlines() if re.search(r'out of memory|oom-kill|Killed process|memory cgroup', line, re.I)]
     notice('Fauna kernel OOM evidence', '\n'.join(oom[-12:]) or 'No matching kernel entries; absence alone does not establish the cause of SIGKILL.')
+    failures = set()
+    for xml in workspace.glob('test-results/**/*.xml'):
+        try:
+            root = ET.parse(xml).getroot()
+        except ET.ParseError:
+            continue
+        notice('Fauna EditMode result', 'total=%s passed=%s failed=%s' % (root.get('total'),root.get('passed'),root.get('failed')))
+        for case in root.iter('test-case'):
+            if case.get('result') != 'Failed':
+                continue
+            failure=case.find('./failure/message')
+            message=(failure.text or '') if failure is not None else 'No message'
+            if message not in failures and len(failures)<8:
+                failures.add(message)
+                stack=case.find('./failure/stack-trace')
+                notice('Fauna failed test', case.get('fullname','')+'\n'+message[:1800]+'\n'+((stack.text or '')[:800] if stack is not None else ''))
     logs = []
     for pattern in ('test-results/**/*.log', 'test-results/**/*.txt', 'unity/Logs/**/*.log', 'build/**/*.log'):
         logs.extend(glob.glob(str(workspace / pattern), recursive=True))
