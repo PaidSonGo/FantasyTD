@@ -26,4 +26,5 @@ jobs:
           set -euo pipefail
           [[ "$RUN_ID" =~ ^[0-9]+$ ]]
           gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --name editmode-results --dir test-results
+          gh run view "$RUN_ID" --repo "$GITHUB_REPOSITORY" --log-failed > test-results/action.log
           python3 .ci/fauna-ci-diagnostics.py report --out "$RUNNER_TEMP/evidence" --workspace "$GITHUB_WORKSPACE"
