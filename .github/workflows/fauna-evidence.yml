@@ -5,6 +5,10 @@ on:
       run:
         required: true
         description: Existing Fauna workflow run ID (source font import paths; no Unity rerun)
+      apk:
+        type: boolean
+        default: false
+        description: Inspect the existing APK artifact instead of failed test logs (no Unity rerun)
 permissions:
   actions: read
   contents: read
@@ -16,6 +20,7 @@ jobs:
         with:
           sparse-checkout: .ci
       - name: Inspect existing test logs without rerunning Unity
+        if: inputs.apk != true
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_ID: ${{ inputs.run }}
@@ -25,3 +30,42 @@ jobs:
           gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --name editmode-results --dir test-results
           gh run view "$RUN_ID" --repo "$GITHUB_REPOSITORY" --log-failed > test-results/action.log
           python3 .ci/fauna-ci-diagnostics.py report --out "$RUNNER_TEMP/evidence" --workspace "$GITHUB_WORKSPACE"
+      - name: Download the existing APK and inspect its manifest and native binaries
+        if: inputs.apk == true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.run }}
+        run: |
+          set -euo pipefail
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]]
+          gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --name FaunaVsKosmici-Quest-apk --dir apk-evidence
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq aapt
+          python3 - <<'PY'
+          import hashlib, json, pathlib, re, subprocess, zipfile
+          apks = list(pathlib.Path('apk-evidence').glob('**/*.apk'))
+          assert len(apks) == 1 and apks[0].name == 'FaunaM2Sandbox.apk', apks
+          apk = apks[0]
+          with zipfile.ZipFile(apk) as z:
+              assert z.testzip() is None, 'APK CRC failure'
+              files = z.namelist()
+              abis = sorted({n.split('/')[1] for n in files if n.startswith('lib/') and n.endswith('.so')})
+              assert abis == ['arm64-v8a'], abis
+              assert 'lib/arm64-v8a/libil2cpp.so' in files
+              xr = [n for n in files if n.startswith('lib/') and 'openxr' in n.lower()]
+              assert xr, 'OpenXR native library missing'
+          badging = subprocess.check_output(['aapt', 'dump', 'badging', str(apk)], text=True)
+          manifest = subprocess.check_output(['aapt', 'dump', 'xmltree', str(apk), 'AndroidManifest.xml'], text=True)
+          assert "package: name='com.paidsongo.faunam2sandbox'" in badging, badging[:500]
+          assert "uses-feature: name='android.hardware.vr.headtracking'" in badging, badging
+          assert 'com.oculus.intent.category.VR' in manifest, 'VR launch category missing'
+          evidence = {'file': apk.name, 'bytes': apk.stat().st_size,
+                      'sha256': hashlib.file_digest(apk.open('rb'), 'sha256').hexdigest(),
+                      'package': 'com.paidsongo.faunam2sandbox', 'abis': abis,
+                      'il2cpp': True, 'openxrLibraries': xr, 'requiredHeadTracking': True,
+                      'vrLaunchCategory': True}
+          print('::notice title=Fauna APK inspection::' + json.dumps(evidence))
+          with open('apk-evidence/inspection.json', 'w') as f:
+              json.dump(evidence, f, indent=2)
+          print(badging)
+          PY
