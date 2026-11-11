@@ -1,5 +1,8 @@
 name: Fauna inspect existing CI evidence
 on:
+  push:
+    branches: [codex/m2-playable-loop-20261111]
+    paths: [.github/workflows/fauna-evidence.yml]
   workflow_dispatch:
     inputs:
       run:
@@ -18,7 +21,7 @@ jobs:
       - name: Inspect existing test logs without rerunning Unity
         env:
           GH_TOKEN: ${{ github.token }}
-          RUN_ID: ${{ inputs.run }}
+          RUN_ID: ${{ inputs.run || '43055587730' }}
         run: |
           set -euo pipefail
           [[ "$RUN_ID" =~ ^[0-9]+$ ]]
