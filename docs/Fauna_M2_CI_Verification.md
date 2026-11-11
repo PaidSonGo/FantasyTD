@@ -1,6 +1,12 @@
-# Fauna M2 — build verified, APK publication BLOCKED
+# Fauna M2 — publication verification after artifact-service recovery
 
-## Latest checkpoint — 2026-11-11
+## Current verification after a successful service probe
+
+The tiny **non-game** artifact probe [43100584345](https://github.com/PaidSonGo/FantasyTD/actions/runs/43100584345) completed SUCCESS, creating `fauna-artifact-api-probe`, artifact13892025629,224bytes. This confirms the same artifact API accepted a new upload after the HTML/502 failures; it is **not an APK or a game test**.
+
+After verifying that no workflow was active, one corrected full run was dispatched: **[43100909842](https://github.com/PaidSonGo/FantasyTD/actions/runs/43100909842)**, exact UnitySHA `1ec67f586a3eeca9466fa429bb640b365f90c6ee`, `apk=true,m2=true`, executed CI revision `ba21a84e7f56c2d61271ea70cf54cca9d7030047`. It includes the umask repair and primary-artifact-before-optional-diagnostics policy. It is **IN PROGRESS**, not a delivery/verification success claim. The previous main run is completed FAILURE as documented below. No game code changed and no further build will be launched without a new diagnosed reason.
+
+## Previous completed failure — 2026-11-11
 
 **The delivery goal is NOT complete. There is no published APK artifact for the current source.**
 
