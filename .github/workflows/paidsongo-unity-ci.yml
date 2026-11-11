@@ -1,0 +1,200 @@
+name: PaidSonGo/Unity - Unity compile, EditMode tests and Quest APK
+
+# Builds and tests the separate, public Unity project PaidSonGo/Unity (VR game "Fauna vs. Kosmici") with this
+# repository's Unity Personal license secrets UNITY_LICENSE, UNITY_EMAIL and UNITY_PASSWORD. The secrets stay in
+# this repository: the other project's code is checked out into ./unity and built here. Nothing in UnityProject/
+# or the Dyrygent executor is used or changed.
+#
+# Start: push a change of .ci/unity-target.txt (ref = branch/commit of PaidSonGo/Unity, apk = true|false) on
+# this branch, or run it by hand. Public repository: standard GitHub runners cost nothing.
+# A run FAILS when Unity cannot run or zero tests executed: a skipped step must never look like a passed compile.
+on:
+  push:
+    branches: [ccr-de272eed-hx88gk]
+    paths: ['.ci/unity-target.txt', '.github/workflows/paidsongo-unity-ci.yml']
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch or commit of PaidSonGo/Unity (empty = .ci/unity-target.txt)
+        required: false
+        default: ''
+      apk:
+        description: Also build the Quest APK
+        type: boolean
+        default: true
+      m2:
+        description: Build the M2 living terrain Quest sandbox (not M1)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  checks: write   # game-ci posts the EditMode results as a check run on this commit
+
+concurrency:
+  group: paidsongo-unity-ci
+  cancel-in-progress: true
+
+jobs:
+  target:
+    name: Resolve target
+    runs-on: ubuntu-latest
+    outputs:
+      ref: ${{ steps.t.outputs.ref }}
+      apk: ${{ steps.t.outputs.apk }}
+      m2: ${{ steps.t.outputs.m2 }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .ci
+      - id: t
+        shell: bash
+        env:
+          IN_REF: ${{ inputs.ref }}
+          IN_APK: ${{ inputs.apk }}
+          IN_M2: ${{ inputs.m2 }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          ref="$IN_REF"; apk="$IN_APK"; m2="$IN_M2"
+          if [ -z "$ref" ]; then ref=$(sed -n 's/^ref=//p' .ci/unity-target.txt | head -1); fi
+          if [ "$EVENT" != "workflow_dispatch" ]; then
+            apk=$(sed -n 's/^apk=//p' .ci/unity-target.txt | head -1)
+            m2=$(sed -n 's/^m2=//p' .ci/unity-target.txt | head -1)
+          fi
+          [ -n "$ref" ] || { echo "::error::No PaidSonGo/Unity ref given"; exit 1; }
+          case "$ref" in *[!A-Za-z0-9._/-]*) echo "::error::Invalid ref '$ref'"; exit 1;; esac
+          [ "$apk" = "true" ] || apk=false
+          [ "$m2" = "true" ] || m2=false
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "apk=$apk" >> "$GITHUB_OUTPUT"
+          echo "m2=$m2" >> "$GITHUB_OUTPUT"
+          echo "Target: PaidSonGo/Unity@$ref  apk=$apk  m2=$m2" | tee -a "$GITHUB_STEP_SUMMARY"
+
+  editmode:
+    name: Unity compile + EditMode tests
+    needs: target
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - name: License check (fails when Unity cannot run)
+        shell: bash
+        run: |
+          missing=""
+          [ -n "$UNITY_LICENSE" ] || missing="$missing UNITY_LICENSE"
+          [ -n "$UNITY_EMAIL" ] || missing="$missing UNITY_EMAIL"
+          [ -n "$UNITY_PASSWORD" ] || missing="$missing UNITY_PASSWORD"
+          if [ -n "$missing" ]; then echo "::error title=Unity NOT VERIFIED::Missing secrets:$missing"; exit 1; fi
+      - name: Reclaim runner disk before large Unity Android editor image
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=== BEFORE ==="
+          df -h /
+          free -h
+          # Editor + Android toolchain runs in GameCI Docker; preinstalled host SDKs are unused.
+          # This is runner-local cleanup, NOT removal of any project's Unity/Android SDK.
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /opt/hostedtoolcache/CodeQL /usr/local/share/powershell || true
+          echo "=== AFTER ==="
+          df -h /
+          free -h
+      - uses: actions/checkout@v4
+        with:
+          repository: PaidSonGo/Unity
+          ref: ${{ needs.target.outputs.ref }}
+          path: unity
+      - uses: actions/cache@v4
+        with:
+          path: unity/Library
+          key: unity-library-editmode-${{ hashFiles('unity/Packages/manifest.json', 'unity/ProjectSettings/ProjectVersion.txt') }}-${{ needs.target.outputs.ref }}
+          restore-keys: unity-library-editmode-${{ hashFiles('unity/Packages/manifest.json', 'unity/ProjectSettings/ProjectVersion.txt') }}-
+      - uses: game-ci/unity-test-runner@v4
+        id: tests
+        with:
+          projectPath: unity
+          testMode: editmode
+          customImage: unityci/editor:ubuntu-6000.6.0f1-android-3
+          customParameters: -job-worker-count 2 -gc-helper-count 1
+          artifactsPath: test-results
+      - name: Summarize results (fails on zero executed tests)
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import glob, os, sys, xml.etree.ElementTree as ET
+          files = glob.glob("test-results/**/*.xml", recursive=True)
+          total = passed = failed = 0
+          lines = []
+          for f in files:
+              root = ET.parse(f).getroot()
+              total += int(root.get("total", "0")); passed += int(root.get("passed", "0")); failed += int(root.get("failed", "0"))
+              for case in root.iter("test-case"):
+                  if case.get("result") == "Failed":
+                      msg = case.find("./failure/message")
+                      lines.append(f"- FAILED {case.get('fullname')}: {(msg.text or '').strip()[:300] if msg is not None else ''}")
+          summary = f"EditMode: total={total} passed={passed} failed={failed} (files: {files})"
+          print(summary); print("\n".join(lines))
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as s:
+              s.write(summary + "\n" + "\n".join(lines) + "\n")
+          if total == 0:
+              print("::error title=Unity NOT VERIFIED::No test results / zero executed tests."); sys.exit(1)
+          if failed:
+              sys.exit(1)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: editmode-results
+          path: test-results
+          retention-days: 14
+
+  quest-apk:
+    name: Quest APK (QuestBuild.BuildApk)
+    needs: [target, editmode]
+    if: needs.target.outputs.apk == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - name: Free disk space for the Android editor image
+        shell: bash
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          df -h /
+      - uses: actions/checkout@v4
+        with:
+          repository: PaidSonGo/Unity
+          ref: ${{ needs.target.outputs.ref }}
+          path: unity
+      - uses: actions/cache@v4
+        with:
+          path: unity/Library
+          key: unity-library-android-${{ hashFiles('unity/Packages/manifest.json', 'unity/ProjectSettings/ProjectVersion.txt') }}-${{ needs.target.outputs.ref }}
+          restore-keys: unity-library-android-${{ hashFiles('unity/Packages/manifest.json', 'unity/ProjectSettings/ProjectVersion.txt') }}-
+      - uses: game-ci/unity-builder@v4
+        with:
+          projectPath: unity
+          targetPlatform: Android
+          androidExportType: androidPackage
+          customParameters: -job-worker-count 2 -gc-helper-count 1
+          buildMethod: ${{ needs.target.outputs.m2 == 'true' && 'LaneDefense.EditorTools.QuestBuild.BuildM2Apk' || 'LaneDefense.EditorTools.QuestBuild.BuildApk' }}
+          buildName: ${{ needs.target.outputs.m2 == 'true' && 'FaunaM2Sandbox' || 'LaneDefenseVR' }}
+      - name: Require an APK
+        shell: bash
+        run: |
+          apk=$(find . -name '*.apk' -not -path './unity/Library/*' | head -1)
+          [ -n "$apk" ] || { echo "::error title=APK missing::No .apk produced"; exit 1; }
+          mkdir -p apk-out && cp "$apk" apk-out/
+          ls -la apk-out; sha256sum apk-out/*.apk | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FaunaVsKosmici-Quest-apk
+          path: apk-out
+          retention-days: 14

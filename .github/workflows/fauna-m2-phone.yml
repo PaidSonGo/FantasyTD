@@ -1,0 +1,140 @@
+name: Fauna M2 - Phone controller emulator APK
+
+# Separate free Android 2D debug build: no headset/OpenXR runtime, no effect on Quest artifact.
+on:
+  push:
+    branches: [ccr-de272eed-hx88gk]
+    paths: ['.ci/phone-target.txt', '.github/workflows/fauna-m2-phone.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+concurrency:
+  group: fauna-m2-phone
+  cancel-in-progress: true
+
+jobs:
+  target:
+    runs-on: ubuntu-24.04
+    outputs:
+      ref: ${{ steps.config.outputs.ref }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .ci
+      - id: config
+        shell: bash
+        run: |
+          set -euo pipefail
+          ref=$(sed -n 's/^ref=//p' .ci/phone-target.txt | head -1)
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::invalid pinned Unity sha"; exit 1; }
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "Phone simulator source: PaidSonGo/Unity@$ref" >> "$GITHUB_STEP_SUMMARY"
+
+  tests:
+    name: Phone simulator - Unity compilation + EditMode
+    needs: target
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - name: Require Unity license
+        run: |
+          test -n "$UNITY_LICENSE" && test -n "$UNITY_EMAIL" && test -n "$UNITY_PASSWORD"
+      - name: Reclaim disk
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /opt/hostedtoolcache/CodeQL /usr/local/share/powershell || true
+          df -h /
+      - uses: actions/checkout@v4
+        with:
+          repository: PaidSonGo/Unity
+          ref: ${{ needs.target.outputs.ref }}
+          path: unity
+      - uses: actions/cache@v4
+        with:
+          path: unity/Library
+          key: phone-sim-library-editmode-${{ needs.target.outputs.ref }}
+          restore-keys: phone-sim-library-editmode-
+      - uses: game-ci/unity-test-runner@v4
+        with:
+          projectPath: unity
+          testMode: editmode
+          customImage: unityci/editor:ubuntu-6000.6.0f1-android-3
+          customParameters: -job-worker-count 1 -gc-helper-count 1
+          artifactsPath: test-results
+      - name: Require and summarize executed test results
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import glob,sys,xml.etree.ElementTree as E,os
+          files=glob.glob('test-results/**/*.xml',recursive=True)
+          n=p=f=0
+          phone=0
+          for file in files:
+              root=E.parse(file).getroot()
+              n+=int(root.get('total','0'));p+=int(root.get('passed','0'));f+=int(root.get('failed','0'))
+              phone+=len([x for x in root.iter('test-case') if 'PhoneSimulation_' in x.get('name','') and x.get('result')=='Passed'])
+          msg=f'Phone EditMode: {p}/{n} passed; failed={f}; phone command tests={phone}'
+          print(msg)
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as out:out.write(msg+'\n')
+          if n==0 or f>0 or phone<2:sys.exit(1)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phone-editmode-results
+          path: test-results
+          retention-days: 14
+
+  apk:
+    name: Build phone simulator APK
+    needs: [target, tests]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - name: Reclaim runner disk
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /opt/hostedtoolcache/CodeQL /usr/local/share/powershell || true
+          df -h /
+      - uses: actions/checkout@v4
+        with:
+          repository: PaidSonGo/Unity
+          ref: ${{ needs.target.outputs.ref }}
+          path: unity
+      - uses: actions/cache@v4
+        with:
+          path: unity/Library
+          key: phone-sim-library-android-${{ needs.target.outputs.ref }}
+          restore-keys: phone-sim-library-android-
+      - uses: game-ci/unity-builder@v4
+        with:
+          projectPath: unity
+          targetPlatform: Android
+          androidExportType: androidPackage
+          buildMethod: LaneDefense.EditorTools.M2PhoneSimBuild.BuildPhoneApk
+          buildName: FaunaM2PhoneSim
+          customParameters: -job-worker-count 1 -gc-helper-count 1
+      - name: Verify phone installer
+        run: |
+          set -euo pipefail
+          apk=$(find . -name 'FaunaM2PhoneSim.apk' -not -path './unity/Library/*' | head -1)
+          test -n "$apk"
+          mkdir -p phone-apk
+          cp "$apk" phone-apk/
+          sha256sum phone-apk/*.apk | tee -a "$GITHUB_STEP_SUMMARY"
+          ls -lh phone-apk/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FaunaM2PhoneSim-apk
+          path: phone-apk
+          retention-days: 14
