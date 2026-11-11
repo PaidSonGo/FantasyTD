@@ -12,7 +12,7 @@ on:
       job:
         required: false
         default: ''
-        description: Read bounded failure evidence from this job ID (no artifact or Unity required)
+        description: Job ID for bounded logs, or artifact-probe for a tiny service-only upload (no Unity)
 permissions:
   actions: read
   contents: read
@@ -75,7 +75,7 @@ jobs:
           print(badging)
           PY
       - name: Read bounded evidence from an existing job log
-        if: inputs.job != ''
+        if: inputs.job != '' && inputs.job != 'artifact-probe'
         env:
           GH_TOKEN: ${{ github.token }}
           JOB_ID: ${{ inputs.job }}
@@ -94,3 +94,16 @@ jobs:
               print('::notice title=Fauna existing job evidence::' + line.replace('%','%25').replace('\r','%0D').replace('\n','%0A'))
           print('::notice title=Fauna existing job log size::' + str(len(lines)) + ' lines')
           PY
+      - name: Prepare a tiny artifact-service probe (not an APK)
+        if: inputs.job == 'artifact-probe'
+        run: |
+          mkdir -p artifact-probe
+          printf 'Fauna artifact service probe. Not an APK. Workflow %s\n' "$GITHUB_SHA" > artifact-probe/probe.txt
+      - name: Probe the same artifact API without compiling Unity
+        if: inputs.job == 'artifact-probe'
+        uses: actions/upload-artifact@v4
+        timeout-minutes: 2
+        with:
+          name: fauna-artifact-api-probe
+          path: artifact-probe/probe.txt
+          retention-days: 1
