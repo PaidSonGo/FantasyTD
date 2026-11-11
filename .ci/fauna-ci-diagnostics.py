@@ -39,7 +39,7 @@ def snapshot():
         if not re.fullmatch('[0-9a-f]{64}', cid):
             continue
         # Explicit allowlist: never serialize Config.Env, command arguments or labels.
-        fmt = '{"id":"{{.Id}}","image":"{{.Config.Image}}","memory":{{.HostConfig.Memory}},"memorySwap":{{.HostConfig.MemorySwap}},"nanoCpus":{{.HostConfig.NanoCpus}},"pid":{{.State.Pid}},"exit":{{.State.ExitCode}},"oomKilled":{{.State.OOMKilled}}}'
+        fmt = '{"id":"{{.Id}}","image":"{{.Config.Image}}","memory":{{.HostConfig.Memory}},"memorySwap":{{.HostConfig.MemorySwap}},"nanoCpus":{{.HostConfig.NanoCpus}},"shmSize":{{.HostConfig.ShmSize}},"pid":{{.State.Pid}},"exit":{{.State.ExitCode}},"oomKilled":{{.State.OOMKilled}}}'
         raw = command(['docker', 'inspect', '--format', fmt, cid])
         try:
             item = json.loads(raw)
@@ -122,6 +122,8 @@ def report(out, workspace):
                 failures.add(message)
                 stack=case.find('./failure/stack-trace')
                 notice('Fauna failed test', case.get('fullname','')+'\n'+message[:1800]+'\n'+((stack.text or '')[:800] if stack is not None else ''))
+    oomd = command(['sudo', '-n', 'journalctl', '-u', 'systemd-oomd', '--since', '@%s' % start, '--no-pager'])
+    notice('Fauna userspace OOM daemon evidence', oomd[-3000:])
     logs = []
     for pattern in ('test-results/**/*.log', 'test-results/**/*.txt', 'unity/Logs/**/*.log', 'build/**/*.log'):
         logs.extend(glob.glob(str(workspace / pattern), recursive=True))

@@ -189,9 +189,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
-      # unity-builder@v4 requires the existing license-file input at its action preflight.
-      # Keep its previously verified configuration; its account fallback is already supported.
-      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      # Same supported Personal account route and CLI as the passing EditMode stage.
+      UNITY_LICENSE: ''
       UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
       UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
     steps:
@@ -229,15 +228,21 @@ jobs:
           set -euo pipefail
           docker pull unityci/editor:ubuntu-6000.6.0f1-android-3
           docker image inspect unityci/editor:ubuntu-6000.6.0f1-android-3 --format '::notice title=Fauna Unity image::id={{.Id}} size={{.Size}} digests={{json .RepoDigests}}'
-      - uses: game-ci/unity-builder@v4
-        with:
-          projectPath: unity
-          customImage: unityci/editor:ubuntu-6000.6.0f1-android-3
-          targetPlatform: Android
-          androidExportType: androidPackage
-          customParameters: -job-worker-count 2 -gc-helper-count 1
-          buildMethod: ${{ needs.target.outputs.m2 == 'true' && 'LaneDefense.EditorTools.QuestBuild.BuildM2Apk' || 'LaneDefense.EditorTools.QuestBuild.BuildApk' }}
-          buildName: ${{ needs.target.outputs.m2 == 'true' && 'FaunaM2Sandbox' || 'LaneDefenseVR' }}
+      - name: Install the same pinned official GameCI CLI used by the test runner
+        uses: game-ci/cli@v0.1.73
+      - name: Build the licensed Quest APK with GameCI CLI
+        shell: bash
+        env:
+          FAUNA_BUILD_METHOD: ${{ needs.target.outputs.m2 == 'true' && 'LaneDefense.EditorTools.QuestBuild.BuildM2Apk' || 'LaneDefense.EditorTools.QuestBuild.BuildApk' }}
+          FAUNA_BUILD_NAME: ${{ needs.target.outputs.m2 == 'true' && 'FaunaM2Sandbox' || 'LaneDefenseVR' }}
+        run: |
+          set -euo pipefail
+          game-ci build unity --engine unity \
+            --customImage unityci/editor:ubuntu-6000.6.0f1-android-3 \
+            --targetPlatform Android --androidExportType androidPackage \
+            --buildMethod "$FAUNA_BUILD_METHOD" --buildName "$FAUNA_BUILD_NAME" \
+            --versioningStrategy Custom --version 0.1.0 --androidVersionCode 1 \
+            --customParameters="-batchmode -nographics -job-worker-count 2 -gc-helper-count 1"
       - name: Publish bounded resource and Unity failure evidence
         if: always()
         shell: bash
