@@ -7,7 +7,7 @@ on:
     inputs:
       run:
         required: true
-        description: Existing Fauna workflow run ID (no Unity rerun)
+        description: Existing Fauna workflow run ID (bounded startup status; no Unity rerun)
 permissions:
   actions: read
   contents: read
