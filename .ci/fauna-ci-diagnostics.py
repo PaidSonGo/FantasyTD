@@ -104,6 +104,8 @@ def report(out, workspace):
     kernel = command(['sudo', '-n', 'journalctl', '-k', '--since', '@%s' % start, '--no-pager'])
     oom = [line for line in kernel.splitlines() if re.search(r'out of memory|oom-kill|Killed process|memory cgroup', line, re.I)]
     notice('Fauna kernel OOM evidence', '\n'.join(oom[-12:]) or 'No matching kernel entries; absence alone does not establish the cause of SIGKILL.')
+    for status in workspace.glob("test-results/**/render-status.txt"):
+        notice("Fauna UI render evidence", status.read_text(errors="replace")[:1800])
     failures = set()
     for xml in workspace.glob('test-results/**/*.xml'):
         try:
