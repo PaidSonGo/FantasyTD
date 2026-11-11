@@ -27,20 +27,28 @@ if [ "$mode" = start ]; then
   echo 1 | sudo -n tee "$trace/events/signal/signal_generate/enable" > /dev/null
   echo 1 | sudo -n tee "$trace/tracing_on" > /dev/null
   # At most 2 MiB; only SIGKILL events are enabled in this separate instance.
-  sudo -n timeout 7200 head -c 2097152 "$trace/trace_pipe" > "$out/sigkill-trace.txt" &
-  echo "$!" > "$out/signal-reader.pid"
+  # Snapshot the ring at stop, rather than terminating a buffered trace_pipe reader.
+  # Keep the native mapping of short-lived Editor processes for symbol lookup.
+  sudo -n nohup python3 "$(dirname "$0")/fauna-ci-diagnostics.py" native-maps --out "$out" > "$out/native-maps-monitor.log" 2>&1 < /dev/null &
   # Verify the trace with an owned, disposable sleep process, not with Unity.
   sleep 60 &
   victim=$!
   echo "control SIGKILL target host pid=$victim" > "$out/signal-control.txt"
   kill -KILL "$victim"
   wait "$victim" 2>/dev/null || true
-  echo '::notice title=Fauna SIGKILL tracing::Enabled sender/target tracing; control target recorded'
+  sudo -n head -c 2097152 "$trace/trace" > "$out/signal-control-trace.txt"
+  if ! grep -q "pid=$victim " "$out/signal-control-trace.txt"; then
+    echo '::error::SIGKILL trace failed its disposable process control; do not start Unity'
+    exit 1
+  fi
+  touch "$out/signal-tracing-enabled"
+  echo '::notice title=Fauna SIGKILL tracing::Control verified; sender/target and native stack tracing enabled'
 elif [ "$mode" = stop ]; then
-  if [ -f "$out/signal-reader.pid" ]; then
+  touch "$out/stop-native-maps"
+  if [ -f "$out/signal-tracing-enabled" ]; then
     echo 0 | sudo -n tee "$trace/tracing_on" > /dev/null
+    sudo -n head -c 2097152 "$trace/trace" > "$out/sigkill-trace.txt"
     echo 0 | sudo -n tee "$trace/events/signal/signal_generate/enable" > /dev/null
-    sudo -n kill -TERM "$(cat "$out/signal-reader.pid")" || true
   fi
 else
   echo 'Expected start or stop' >&2

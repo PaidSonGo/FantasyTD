@@ -77,6 +77,19 @@ def monitor(out):
             child.wait(timeout=10)
 
 
+def native_maps(out):
+    """Only native ELF mappings and process names, never memory, argv or environment."""
+    deadline = time.monotonic() + 7200
+    while time.monotonic() < deadline and not (out / 'stop-native-maps').exists():
+        for proc in Path('/proc').glob('[0-9]*'):
+            if read(proc / 'comm') not in ('Unity', 'Unity Main Thre'):
+                continue
+            mappings = read(proc / 'maps')
+            if mappings != 'unavailable' and len(mappings) < 2_000_000:
+                (out / ('native-map-%s.txt' % proc.name)).write_text(mappings)
+        time.sleep(0.2)
+
+
 def report(out, workspace):
     out.mkdir(parents=True, exist_ok=True)
     (out / 'stop').touch()
@@ -165,11 +178,13 @@ def report(out, workspace):
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
-    ap.add_argument('mode', choices=['monitor', 'report'])
+    ap.add_argument('mode', choices=['monitor', 'report', 'native-maps'])
     ap.add_argument('--out', type=Path, required=True)
     ap.add_argument('--workspace', type=Path, default=Path.cwd())
     args = ap.parse_args()
     if args.mode == 'monitor':
         monitor(args.out)
+    elif args.mode == 'native-maps':
+        native_maps(args.out)
     else:
         report(args.out, args.workspace)

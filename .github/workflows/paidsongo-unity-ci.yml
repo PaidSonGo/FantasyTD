@@ -110,11 +110,11 @@ jobs:
           repository: PaidSonGo/Unity
           ref: ${{ needs.target.outputs.ref }}
           path: unity
-      - uses: actions/cache@v4
-        with:
-          path: unity/Library
-          key: unity-library-editmode-${{ hashFiles('unity/Packages/manifest.json', 'unity/ProjectSettings/ProjectVersion.txt') }}-${{ needs.target.outputs.ref }}
-          restore-keys: unity-library-editmode-${{ hashFiles('unity/Packages/manifest.json', 'unity/ProjectSettings/ProjectVersion.txt') }}-
+      # Three failing starts restored the same Library and died at native assembly reload.
+      # Validate from a clean import, without cached Editor/DataStore process state.
+      - name: Require a clean Unity import
+        shell: bash
+        run: test ! -d unity/Library
       - uses: actions/checkout@v4
         with:
           sparse-checkout: .ci
@@ -127,7 +127,7 @@ jobs:
           bash ci-host/.ci/fauna-signal-trace.sh start "$RUNNER_TEMP/fauna-diagnostics"
           nohup python3 ci-host/.ci/fauna-ci-diagnostics.py monitor --out "$RUNNER_TEMP/fauna-diagnostics" > "$RUNNER_TEMP/fauna-diagnostics/monitor.log" 2>&1 < /dev/null &
           echo "::notice title=Fauna runner::os=$RUNNER_OS arch=$RUNNER_ARCH cpus=$(nproc)"
-          echo "::notice title=Fauna host kernel and ASLR::$(uname -r) mmap_rnd_bits=$(cat /proc/sys/vm/mmap_rnd_bits)"
+          echo "::notice title=Fauna host kernel and ASLR::$(uname -r) mmap_rnd_bits=$(sudo -n cat /proc/sys/vm/mmap_rnd_bits)"
           free -h
           df -h /
       - name: Pull pinned Unity Android image before starting the Editor
@@ -211,11 +211,11 @@ jobs:
           repository: PaidSonGo/Unity
           ref: ${{ needs.target.outputs.ref }}
           path: unity
-      - uses: actions/cache@v4
-        with:
-          path: unity/Library
-          key: unity-library-android-${{ hashFiles('unity/Packages/manifest.json', 'unity/ProjectSettings/ProjectVersion.txt') }}-${{ needs.target.outputs.ref }}
-          restore-keys: unity-library-android-${{ hashFiles('unity/Packages/manifest.json', 'unity/ProjectSettings/ProjectVersion.txt') }}-
+      # Three failing starts restored the same Library and died at native assembly reload.
+      # Validate from a clean import, without cached Editor/DataStore process state.
+      - name: Require a clean Unity import
+        shell: bash
+        run: test ! -d unity/Library
       - uses: actions/checkout@v4
         with:
           sparse-checkout: .ci
@@ -228,7 +228,7 @@ jobs:
           bash ci-host/.ci/fauna-signal-trace.sh start "$RUNNER_TEMP/fauna-diagnostics"
           nohup python3 ci-host/.ci/fauna-ci-diagnostics.py monitor --out "$RUNNER_TEMP/fauna-diagnostics" > "$RUNNER_TEMP/fauna-diagnostics/monitor.log" 2>&1 < /dev/null &
           echo "::notice title=Fauna runner::os=$RUNNER_OS arch=$RUNNER_ARCH cpus=$(nproc)"
-          echo "::notice title=Fauna host kernel and ASLR::$(uname -r) mmap_rnd_bits=$(cat /proc/sys/vm/mmap_rnd_bits)"
+          echo "::notice title=Fauna host kernel and ASLR::$(uname -r) mmap_rnd_bits=$(sudo -n cat /proc/sys/vm/mmap_rnd_bits)"
           free -h
           df -h /
       - name: Pull pinned Unity Android image before starting the Editor
