@@ -122,6 +122,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/fauna-diagnostics"
+          bash ci-host/.ci/fauna-signal-trace.sh start "$RUNNER_TEMP/fauna-diagnostics"
           nohup python3 ci-host/.ci/fauna-ci-diagnostics.py monitor --out "$RUNNER_TEMP/fauna-diagnostics" > "$RUNNER_TEMP/fauna-diagnostics/monitor.log" 2>&1 < /dev/null &
           echo "::notice title=Fauna runner::os=$RUNNER_OS arch=$RUNNER_ARCH cpus=$(nproc)"
           free -h
@@ -144,7 +145,9 @@ jobs:
       - name: Publish bounded resource and Unity failure evidence
         if: always()
         shell: bash
-        run: python3 ci-host/.ci/fauna-ci-diagnostics.py report --out "$RUNNER_TEMP/fauna-diagnostics" --workspace "$GITHUB_WORKSPACE"
+        run: |
+          bash ci-host/.ci/fauna-signal-trace.sh stop "$RUNNER_TEMP/fauna-diagnostics"
+          python3 ci-host/.ci/fauna-ci-diagnostics.py report --out "$RUNNER_TEMP/fauna-diagnostics" --workspace "$GITHUB_WORKSPACE"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -219,6 +222,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/fauna-diagnostics"
+          bash ci-host/.ci/fauna-signal-trace.sh start "$RUNNER_TEMP/fauna-diagnostics"
           nohup python3 ci-host/.ci/fauna-ci-diagnostics.py monitor --out "$RUNNER_TEMP/fauna-diagnostics" > "$RUNNER_TEMP/fauna-diagnostics/monitor.log" 2>&1 < /dev/null &
           echo "::notice title=Fauna runner::os=$RUNNER_OS arch=$RUNNER_ARCH cpus=$(nproc)"
           free -h
@@ -259,7 +263,9 @@ jobs:
       - name: Publish bounded resource and Unity failure evidence
         if: always()
         shell: bash
-        run: python3 ci-host/.ci/fauna-ci-diagnostics.py report --out "$RUNNER_TEMP/fauna-diagnostics" --workspace "$GITHUB_WORKSPACE"
+        run: |
+          bash ci-host/.ci/fauna-signal-trace.sh stop "$RUNNER_TEMP/fauna-diagnostics"
+          python3 ci-host/.ci/fauna-ci-diagnostics.py report --out "$RUNNER_TEMP/fauna-diagnostics" --workspace "$GITHUB_WORKSPACE"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
