@@ -1,2 +1,2 @@
 # Independent no-OpenXR Android phone test harness. Real M2QuestDirector and LivingRun.
-ref=957ee84af020b0e87416c745bbbb73722edbfab0
+ref=505b2b41ea48b4a00f57ec9093c5220b2177263b
