@@ -1,5 +1,5 @@
 # Free GitHub Actions CI: PaidSonGo/Unity M2 Quest terrain sandbox
 # Compile/EditMode uses Android-enabled Unity image; APK uses BuildM2Apk (not M1 scene).
-ref=c69c3576036649239881086a440e4bac64eb56dc
+ref=6c0dc6fd936980a69e0f2cbdf5ed0a652d8e2239
 apk=true
 m2=true
