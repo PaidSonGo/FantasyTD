@@ -136,6 +136,7 @@ jobs:
         id: tests
         with:
           projectPath: unity
+          cliVersion: v0.1.73
           testMode: editmode
           customImage: unityci/editor:ubuntu-6000.6.0f1-android-3
           customParameters: -nographics -job-worker-count 2 -gc-helper-count 1
@@ -241,7 +242,7 @@ jobs:
             --customImage unityci/editor:ubuntu-6000.6.0f1-android-3 \
             --targetPlatform Android --androidExportType androidPackage \
             --buildMethod "$FAUNA_BUILD_METHOD" --buildName "$FAUNA_BUILD_NAME" \
-            --versioningStrategy Custom --version 0.1.0 --androidVersionCode 1 \
+            --versioningStrategy None --androidVersionCode 1 \
             --customParameters="-batchmode -nographics -job-worker-count 2 -gc-helper-count 1"
       - name: Publish bounded resource and Unity failure evidence
         if: always()
