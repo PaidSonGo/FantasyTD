@@ -1,32 +1,40 @@
-# Fauna M2 UI — stage closed, handed to Claude; APK blocked
+# Fauna M2 — CI resumed; fresh-import tests pass, APK publication being verified
 
-## Wynik etapu i przekazanie Claude
+## Current checkpoint (2026-11-11)
 
-Na prośbę właściciela **etap Codex zakończony i przekazany Claude**. Brak dalszych prób CI lub zmian kodu po tym raporcie. PR-y niescalone.
+- Unity source / PR #10 HEAD: `1ec67f586a3eeca9466fa429bb640b365f90c6ee` — unchanged during this CI repair.
+- Unity 6000.6.0f1, [PR #10](https://github.com/PaidSonGo/Unity/pull/10), [CI PR #41](https://github.com/PaidSonGo/FantasyTD/pull/41). Both remain drafts; no merge.
+- Full **clean-import EditMode: 387 PASS / 0 FAIL**, 42.745 s, including **24/24 UI** and **5/5 M2 scene** cases, [run 43086150449 / test job](https://github.com/PaidSonGo/FantasyTD/actions/runs/43086150449/job/130751021085).
+- That run actually built `build/Android/FaunaM2Sandbox.apk` (~70 MiB): `QUEST_BUILD_RESULT Succeeded errors=0 warnings=14`. IL2CPP, ARM64, M2LivingReserve, `com.paidsongo.faunam2sandbox`; Quest scene/material/build/manifest guards passed. The CLI subsequently rejected the successful custom report and the upload was skipped. **No downloadable artifact for this source has yet been published.**
+- [Current controlled verification run 43092132765](https://github.com/PaidSonGo/FantasyTD/actions/runs/43092132765) is running full EditMode + APK from the exact same Unity SHA. Executed CI revision: `ff5a5528d4c5072579e0316032a4e7bd4a071882`.
+- Status: **UNITY_TESTED / APK_BUILT_BUT_NOT_PUBLISHED / CURRENT_CI_RUNNING / QUEST_UNVERIFIED**. This checkpoint is not a completion claim.
 
-- Dokładny Unity SHA: `1ec67f586a3eeca9466fa429bb640b365f90c6ee`.
-- Unity **6000.6.0f1**: kompilacja, generowanie sceny/zależności i pełne EditMode **387 PASS / 0 FAIL**, w tym **24 nowe przypadki UI**. [Test job](https://github.com/PaidSonGo/FantasyTD/actions/runs/43077272338/job/130720379555).
-- [Ostatni zakończony workflow](https://github.com/PaidSonGo/FantasyTD/actions/runs/43077272338) ma wynik **FAILURE w etapie instalacji CLI dla APK**, po zaliczeniu testów. Job `130723791167`, krok `Install the same pinned official GameCI CLI used by the test runner`, exit **126**. Krok budowania Unity i upload APK zostały pominięte.
-- **Nowy APK dla tego SHA nie został wygenerowany.** Nie oznaczam pełnego celu builda jako ukończonego.
-- Historyczny rzeczywisty APK nowego UI: [run 43064500956 / artefakt 13876781845](https://github.com/PaidSonGo/FantasyTD/actions/runs/43064500956/artifacts/13876781845), SHA `a33ac75e2b5de0d5b60cf1ad8e978bd42554cfdb`, 385/385. To wcześniejsza wersja, bez ostatniej poprawki zapamiętanego celu i komunikatu odmowy instynktu; **nie jest APK najnowszego SHA**.
+## Diagnosed failures and focused changes
 
-## Konkretny bloker i następny krok
+| Run | Change / observation | Actual result |
+|---|---|---|
+| [43080679743](https://github.com/PaidSonGo/FantasyTD/actions/runs/43080679743) | Claude `23a6d2b` fixed the nonexecutable installer by calling the pinned script through bash. | Editor killed before tests; APK skipped. |
+| [43082906419](https://github.com/PaidSonGo/FantasyTD/actions/runs/43082906419) | Host signal trace `f4f4444`. `Unity Main Thre-3623 … signal_generate: sig=9 code=0 comm=Unity Main Thre pid=3623`. | **Unity itself sent SIGKILL to its own PID.** Last sampled peak ~0.85 GB / 15.92 GB, OOM counters zero. No test executed. |
+| [43084277016](https://github.com/PaidSonGo/FantasyTD/actions/runs/43084277016) | `441d088`: pin Unity jobs to supported Ubuntu 22.04 instead of migrating ubuntu-latest/26.04. Same Library restored. | Still failed at native Mono reload. OS pin alone did **not** fix startup. |
+| [43086150449](https://github.com/PaidSonGo/FantasyTD/actions/runs/43086150449) | `758573c`: no Library restore in either Unity job; trace snapshot/control and native maps. | Fresh tests 387/387; separate fresh Android import + build **Succeeded, 0 errors, 14 warnings**. No Editor self-SIGKILL in either job. CLI post-build parser failed; APK upload skipped. |
+| [43092132765](https://github.com/PaidSonGo/FantasyTD/actions/runs/43092132765) | `ff5a552`: strict report compatibility adapter plus exact APK/CRC/ARM64 guard and candidate retention. | In progress; final result must be checked. |
 
-Oficjalna akcja `game-ci/cli@v0.1.73` wywołuje bezpośrednio `install.sh`, lecz zarówno ten plik, jak i `scripts/install.sh` mają w repo tryb Git **100644**. Lokalne odtworzenie bezpośredniego wywołania daje `Permission denied`, exit126. To błąd instalacji narzędzia, przed Dockerem/Unity; nie błąd gry ani brak sekretów.
+The restored-Library issue is intermittent: older restored starts also passed. The exact internal Unity call and triggering Library subtree were not isolated. Clean imports eliminated the reproduced early failure in both jobs of run 43086150449; the cache remains disabled. The kernel trace establishes the SIGKILL sender, not the reason inside Unity. [An independent related cache report](https://github.com/evenflow58/Dungeon-Keeper/issues/118) is corroborating context, not proof about this project.
 
-Claude: zmienić wyłącznie instalację CLI na uruchomienie `bash scripts/install.sh` z pobranego, przypiętego źródła albo na pobranie i rozpakowanie przypiętego archiwum po weryfikacji sumy. Archiwum `game-ci-linux-x64.tar.gz` z wydania v0.1.73 zostało lokalnie pobrane i sprawdzone: SHA256 `3d4cc79952121ea46173d4d1eb8f2b6c6bcc866191489ec754e1511ab90d2fcd`. Nie przywracać `--version` w komendzie build (kolizja globalnego przełącznika); obecne argumenty `--versioningStrategy None` i reszta opcji przeszły lokalną walidację parsera.
+The observed post-build failure is exact: CLI v0.1.73 `UnityBuildValidation.validateBuild` accepts `Build succeeded!` or its own `# Build results #` banner. Our existing custom builder reports `QUEST_BUILD_RESULT Succeeded …`; GameCI's shell prints `Build succeeded` without the exclamation mark. Unity exited 0, produced the file, and returned its entitlement license before the CLI threw its parser error.
 
-Następnie jeden kontrolowany przebieg z pełnym SHA powyżej. Kod UI jest już zweryfikowany; nie implementować go ponownie. Jeśli SIGKILL powróci po uruchomieniu Unity, ustalić nadawcę sygnału i stan runnera, bez automatycznego nazywania go OOM. Wcześniejszy builder137 wystąpił przy przeładowaniu bibliotek, peak2,79GB/limit15,92GB, oom=0/OOMKilled=false. Dane nie ustalają przyczyny historycznego137.
+`.ci/fauna-gameci-build-log.sh` uses the official `ENGINE_LAUNCH_WRAPPER` hook. It preserves Editor/tee failures and emits the parser's expected banner only when the Quest report says Succeeded/zero errors, the Editor exited 0, and the expected APK is nonempty. Activation/return calls cannot fabricate a build report. **6/6 local adapter boundary tests passed** (shell fixtures, not Unity tests), including exit137, failed report, nonzero errors, missing APK and license-only invocation.
 
-Alternatywa kompilacji: lokalny licencjonowany Editor **6000.6.0f1 z Android module**, checkout dokładnego SHA, `LaneDefense.EditorTools.QuestBuild.BuildM2Apk` (menu M2 Build Quest APK lub batchmode `-buildTarget Android -executeMethod ... -customBuildPath <...>/FaunaM2Sandbox.apk`). Nie korzystać z płatnych usług bez zgody.
+The package step checks the exact M2 filename, ZIP CRC and ARM64 IL2CPP payload. It can retain a valid candidate after a post-build tool failure without turning the failed job green. Existing `fauna-evidence.yml` has an `apk=true` mode to download an existing artifact on a GitHub runner, check aapt manifest/package/VR head tracking and category, ARM64/IL2CPP/OpenXR, CRC and the actual APK SHA-256. That inspection never starts Unity or rebuilds the project.
 
-## Granice weryfikacji
+Claude's installer fix is preserved and actually passed. No license secret, RAM/swap limit, ASLR setting, Unity version, package, gameplay, camera, controller binding or model was changed. No paid service was used.
 
-Automatycznie sprawdzone: HUD każdej fazy, gatunki i koszty, legalne/zabronione i bezpłatne podglądy, DNA/energia, skróty i zdarzenie promienia, zapamiętany cel A, niesione zwierzę, trzy nagrody i pojedynczy odbiór, dwa instynkty/anulowanie/brakDNA, sześć mutacji/sloty, numerowane pola, instruktaż i restart. Istniejące testy sceny obejmują rzeczywistą symulację trzech dni, ataki, wygraną/przegraną i rozwój. Nie są to testy fizycznego urządzenia.
+## Verification limits
 
-Brak zrzutów sceny: próba rzeczywistego renderowania zgłosiła `graphicsDeviceType=Null`, Unity MCP SSE429. Bez ilustracji udających screenshot. **Quest3/72FPS niezweryfikowane**: czytelność i nakładanie paneli w ruchu, zasięg nadgarstka/promienia, przyciski Touch Plus, uruchomienie/stereo/tracking i komfort. Problem kamery/XR Origin pozostaje osobnym zadaniem.
-
-Infrastructure workflow revision: `0722e50019cd9382c51d58063d7d511e785121c4`. FantasyTD/UnityProject and Claude game branches unchanged. No PR merged, no paid service used, no speculative RAM/swap cap change.
+- The 387 tests cover the existing three-day run/win/loss/restart and progression, plus UI costs/refusals, five animal choices, quick slots, target/preview validity, three rewards/atomic confirmation, instincts/cancellation, mutations/slots, phase HUD and reset. These are automated Unity EditMode scenarios, not physical Quest tests.
+- Real screenshots unavailable: Unity reported `graphicsDeviceType=Null`. No generated illustration was substituted.
+- Quest 3 installation/launch, stereo/tracking, Touch Plus ergonomics, HUD/wrist readability, camera/comfort, materials and sustained 72 FPS remain unverified.
+- Cold Android import emitted nonblocking AssetImportWorker/OpenXR initialization and shader-deprecation diagnostics. Main BuildReport still explicitly reported Succeeded, 0 errors and 14 warnings; retain these logs for later review rather than misidentifying them as the CLI parser failure.
 
 ## Historical verification before the UI work (363 tests)
 
