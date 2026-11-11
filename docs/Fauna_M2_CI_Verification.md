@@ -1,4 +1,34 @@
-# Fauna M2 / Unity PR #10 — verification evidence
+# Fauna M2 UI — stage closed, handed to Claude; APK blocked
+
+## Wynik etapu i przekazanie Claude
+
+Na prośbę właściciela **etap Codex zakończony i przekazany Claude**. Brak dalszych prób CI lub zmian kodu po tym raporcie. PR-y niescalone.
+
+- Dokładny Unity SHA: `1ec67f586a3eeca9466fa429bb640b365f90c6ee`.
+- Unity **6000.6.0f1**: kompilacja, generowanie sceny/zależności i pełne EditMode **387 PASS / 0 FAIL**, w tym **24 nowe przypadki UI**. [Test job](https://github.com/PaidSonGo/FantasyTD/actions/runs/43077272338/job/130720379555).
+- [Ostatni zakończony workflow](https://github.com/PaidSonGo/FantasyTD/actions/runs/43077272338) ma wynik **FAILURE w etapie instalacji CLI dla APK**, po zaliczeniu testów. Job `130723791167`, krok `Install the same pinned official GameCI CLI used by the test runner`, exit **126**. Krok budowania Unity i upload APK zostały pominięte.
+- **Nowy APK dla tego SHA nie został wygenerowany.** Nie oznaczam pełnego celu builda jako ukończonego.
+- Historyczny rzeczywisty APK nowego UI: [run 43064500956 / artefakt 13876781845](https://github.com/PaidSonGo/FantasyTD/actions/runs/43064500956/artifacts/13876781845), SHA `a33ac75e2b5de0d5b60cf1ad8e978bd42554cfdb`, 385/385. To wcześniejsza wersja, bez ostatniej poprawki zapamiętanego celu i komunikatu odmowy instynktu; **nie jest APK najnowszego SHA**.
+
+## Konkretny bloker i następny krok
+
+Oficjalna akcja `game-ci/cli@v0.1.73` wywołuje bezpośrednio `install.sh`, lecz zarówno ten plik, jak i `scripts/install.sh` mają w repo tryb Git **100644**. Lokalne odtworzenie bezpośredniego wywołania daje `Permission denied`, exit126. To błąd instalacji narzędzia, przed Dockerem/Unity; nie błąd gry ani brak sekretów.
+
+Claude: zmienić wyłącznie instalację CLI na uruchomienie `bash scripts/install.sh` z pobranego, przypiętego źródła albo na pobranie i rozpakowanie przypiętego archiwum po weryfikacji sumy. Archiwum `game-ci-linux-x64.tar.gz` z wydania v0.1.73 zostało lokalnie pobrane i sprawdzone: SHA256 `3d4cc79952121ea46173d4d1eb8f2b6c6bcc866191489ec754e1511ab90d2fcd`. Nie przywracać `--version` w komendzie build (kolizja globalnego przełącznika); obecne argumenty `--versioningStrategy None` i reszta opcji przeszły lokalną walidację parsera.
+
+Następnie jeden kontrolowany przebieg z pełnym SHA powyżej. Kod UI jest już zweryfikowany; nie implementować go ponownie. Jeśli SIGKILL powróci po uruchomieniu Unity, ustalić nadawcę sygnału i stan runnera, bez automatycznego nazywania go OOM. Wcześniejszy builder137 wystąpił przy przeładowaniu bibliotek, peak2,79GB/limit15,92GB, oom=0/OOMKilled=false. Dane nie ustalają przyczyny historycznego137.
+
+Alternatywa kompilacji: lokalny licencjonowany Editor **6000.6.0f1 z Android module**, checkout dokładnego SHA, `LaneDefense.EditorTools.QuestBuild.BuildM2Apk` (menu M2 Build Quest APK lub batchmode `-buildTarget Android -executeMethod ... -customBuildPath <...>/FaunaM2Sandbox.apk`). Nie korzystać z płatnych usług bez zgody.
+
+## Granice weryfikacji
+
+Automatycznie sprawdzone: HUD każdej fazy, gatunki i koszty, legalne/zabronione i bezpłatne podglądy, DNA/energia, skróty i zdarzenie promienia, zapamiętany cel A, niesione zwierzę, trzy nagrody i pojedynczy odbiór, dwa instynkty/anulowanie/brakDNA, sześć mutacji/sloty, numerowane pola, instruktaż i restart. Istniejące testy sceny obejmują rzeczywistą symulację trzech dni, ataki, wygraną/przegraną i rozwój. Nie są to testy fizycznego urządzenia.
+
+Brak zrzutów sceny: próba rzeczywistego renderowania zgłosiła `graphicsDeviceType=Null`, Unity MCP SSE429. Bez ilustracji udających screenshot. **Quest3/72FPS niezweryfikowane**: czytelność i nakładanie paneli w ruchu, zasięg nadgarstka/promienia, przyciski Touch Plus, uruchomienie/stereo/tracking i komfort. Problem kamery/XR Origin pozostaje osobnym zadaniem.
+
+Infrastructure workflow revision: `0722e50019cd9382c51d58063d7d511e785121c4`. FantasyTD/UnityProject and Claude game branches unchanged. No PR merged, no paid service used, no speculative RAM/swap cap change.
+
+## Historical verification before the UI work (363 tests)
 
 This report concerns the external PaidSonGo/Unity project only. FantasyTD/UnityProject and its game are unchanged.
 
