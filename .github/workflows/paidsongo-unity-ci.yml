@@ -189,9 +189,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
-      # The existing account activation is the supported Personal route for ephemeral runners.
-      # Do not bootstrap a second Editor with a machine-bound .ulf before the test/build Editor.
-      UNITY_LICENSE: ''
+      # unity-builder@v4 requires the existing license-file input at its action preflight.
+      # Keep its previously verified configuration; its account fallback is already supported.
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
       UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
       UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
     steps:
