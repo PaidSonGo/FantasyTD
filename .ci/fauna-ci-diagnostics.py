@@ -134,6 +134,8 @@ def report(out, workspace):
             if re.search(r'(^|\s)Killed$', line):
                 context=[x[:650] for x in log_lines[max(0,index-6):index+8] if not re.search(r'password|serial|session|token|signature|command line|machine|user.?name|user.?id|email|ulf',x,re.I)]
                 notice('Fauna terminated process context','\n'.join(context))
+            if 'Unable to load font face' in line:
+                notice('Fauna font import evidence',line[:900])
             if re.search(r'error CS\d+|Compilation failed|Scripts have compiler errors|SIGKILL|out of memory|fatal error|licens.*(fail|error|unavailable|invalid)|activation.*(fail|error)|Aborting|Failed to|Exception:|Error:', line, re.I):
                 errors.append(re.sub(r'[A-Za-z0-9_.+-]+@[A-Za-z0-9.-]+', '[redacted-email]', line[:900]))
             if re.search(r'Receiving|SIG[A-Z]|[Ss]tacktrace|[Nn]ative [Ss]tack|[Ff]atal|[Aa]borted|[Kk]illed|[Ss]egmentation|[Gg]raphics|Gfx|Vulkan|[Cc]rash|[Ll]oading|Initialize|[Uu]nrecognized|[Ff]ailed|[Rr]efresh|[Pp]roject|[Cc]ommand.*(invalid|incorrect)|[Ee]xception', line) and not re.search(r'password|serial|session|token|signature|command line|machine|user.?name|user.?id|email', line, re.I):
