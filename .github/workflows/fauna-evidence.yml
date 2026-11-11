@@ -1,0 +1,113 @@
+name: Fauna inspect existing CI evidence
+on:
+  workflow_dispatch:
+    inputs:
+      run:
+        required: true
+        description: Existing Fauna workflow run ID (source font import paths; no Unity rerun)
+      apk:
+        type: boolean
+        default: false
+        description: Inspect the existing APK artifact instead of failed test logs (no Unity rerun)
+      job:
+        required: false
+        default: ''
+        description: Job ID for bounded logs, or artifact-probe for a tiny service-only upload (no Unity)
+permissions:
+  actions: read
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .ci
+      - name: Inspect existing test logs without rerunning Unity
+        if: inputs.apk != true && inputs.job == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.run }}
+        run: |
+          set -euo pipefail
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]]
+          gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --name editmode-results --dir test-results
+          gh run view "$RUN_ID" --repo "$GITHUB_REPOSITORY" --log-failed > test-results/action.log
+          python3 .ci/fauna-ci-diagnostics.py report --out "$RUNNER_TEMP/evidence" --workspace "$GITHUB_WORKSPACE"
+      - name: Download the existing APK and inspect its manifest and native binaries
+        if: inputs.apk == true && inputs.job == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.run }}
+        run: |
+          set -euo pipefail
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]]
+          gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --name FaunaVsKosmici-Quest-apk --dir apk-evidence
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq aapt
+          python3 - <<'PY'
+          import hashlib, json, pathlib, re, subprocess, zipfile
+          apks = list(pathlib.Path('apk-evidence').glob('**/*.apk'))
+          assert len(apks) == 1 and apks[0].name == 'FaunaM2Sandbox.apk', apks
+          apk = apks[0]
+          with zipfile.ZipFile(apk) as z:
+              assert z.testzip() is None, 'APK CRC failure'
+              files = z.namelist()
+              abis = sorted({n.split('/')[1] for n in files if n.startswith('lib/') and n.endswith('.so')})
+              assert abis == ['arm64-v8a'], abis
+              assert 'lib/arm64-v8a/libil2cpp.so' in files
+              xr = [n for n in files if n.startswith('lib/') and 'openxr' in n.lower()]
+              assert xr, 'OpenXR native library missing'
+          badging = subprocess.check_output(['aapt', 'dump', 'badging', str(apk)], text=True)
+          manifest = subprocess.check_output(['aapt', 'dump', 'xmltree', str(apk), 'AndroidManifest.xml'], text=True)
+          assert "package: name='com.paidsongo.faunam2sandbox'" in badging, badging[:500]
+          assert "uses-feature: name='android.hardware.vr.headtracking'" in badging, badging
+          assert 'com.oculus.intent.category.VR' in manifest, 'VR launch category missing'
+          digest = hashlib.sha256()
+          with apk.open('rb') as stream:
+              for chunk in iter(lambda: stream.read(1024 * 1024), b''):
+                  digest.update(chunk)
+          evidence = {'file': apk.name, 'bytes': apk.stat().st_size,
+                      'sha256': digest.hexdigest(),
+                      'package': 'com.paidsongo.faunam2sandbox', 'abis': abis,
+                      'il2cpp': True, 'openxrLibraries': xr, 'requiredHeadTracking': True,
+                      'vrLaunchCategory': True}
+          print('::notice title=Fauna APK inspection::' + json.dumps(evidence))
+          with open('apk-evidence/inspection.json', 'w') as f:
+              json.dump(evidence, f, indent=2)
+          print(badging)
+          PY
+      - name: Read bounded evidence from an existing job log
+        if: inputs.job != '' && inputs.job != 'artifact-probe'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JOB_ID: ${{ inputs.job }}
+        run: |
+          set -euo pipefail
+          [[ "$JOB_ID" =~ ^[0-9]+$ ]]
+          timeout 90s gh api "repos/$GITHUB_REPOSITORY/actions/jobs/$JOB_ID/logs" > "$RUNNER_TEMP/job-evidence.log"
+          python3 - <<'PY'
+          import os, pathlib, re
+          lines = (pathlib.Path(os.environ['RUNNER_TEMP']) / 'job-evidence.log').read_text(errors='replace').splitlines()
+          exclude = r'password|serial|session|token|signature|command line|machine|user.?name|user.?id|email'
+          # JSON parser errors say "Unexpected token"; keep that diagnostic while
+          # continuing to exclude credential/token log lines.
+          relevant = [x[:650] for x in lines if re.search(r'error|exception|EACCES|permission|upload|artifact|failed|traceback|File ".*fauna', x, re.I) and not re.search(exclude, x.replace('Unexpected token', 'Unexpected JSON character'), re.I)]
+          for line in relevant[-30:]:
+              print('::notice title=Fauna existing job evidence::' + line.replace('%','%25').replace('\r','%0D').replace('\n','%0A'))
+          print('::notice title=Fauna existing job log size::' + str(len(lines)) + ' lines')
+          PY
+      - name: Prepare a tiny artifact-service probe (not an APK)
+        if: inputs.job == 'artifact-probe'
+        run: |
+          mkdir -p artifact-probe
+          printf 'Fauna artifact service probe. Not an APK. Workflow %s\n' "$GITHUB_SHA" > artifact-probe/probe.txt
+      - name: Probe the same artifact API without compiling Unity
+        if: inputs.job == 'artifact-probe'
+        uses: actions/upload-artifact@v4
+        timeout-minutes: 2
+        with:
+          name: fauna-artifact-api-probe
+          path: artifact-probe/probe.txt
+          retention-days: 1

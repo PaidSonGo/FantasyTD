@@ -74,10 +74,14 @@ jobs:
   editmode:
     name: Unity compile + EditMode tests
     needs: target
-    runs-on: ubuntu-latest
+    # Unity 6000.6 supports Ubuntu 22.04/24.04. Do not silently migrate its host kernel
+    # with ubuntu-latest (now 26.04); run 43082906419 traced Unity self-SIGKILL at Mono reload.
+    runs-on: ubuntu-22.04
     timeout-minutes: 90
     env:
-      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      # The existing account activation is the supported Personal route for ephemeral runners.
+      # Do not bootstrap a second Editor with a machine-bound .ulf before the test/build Editor.
+      UNITY_LICENSE: ''
       UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
       UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
     steps:
@@ -85,7 +89,6 @@ jobs:
         shell: bash
         run: |
           missing=""
-          [ -n "$UNITY_LICENSE" ] || missing="$missing UNITY_LICENSE"
           [ -n "$UNITY_EMAIL" ] || missing="$missing UNITY_EMAIL"
           [ -n "$UNITY_PASSWORD" ] || missing="$missing UNITY_PASSWORD"
           if [ -n "$missing" ]; then echo "::error title=Unity NOT VERIFIED::Missing secrets:$missing"; exit 1; fi
@@ -107,19 +110,48 @@ jobs:
           repository: PaidSonGo/Unity
           ref: ${{ needs.target.outputs.ref }}
           path: unity
-      - uses: actions/cache@v4
+      # Three failing starts restored the same Library and died at native assembly reload.
+      # Validate from a clean import, without cached Editor/DataStore process state.
+      - name: Require a clean Unity import
+        shell: bash
+        run: test ! -d unity/Library
+      - uses: actions/checkout@v4
         with:
-          path: unity/Library
-          key: unity-library-editmode-${{ hashFiles('unity/Packages/manifest.json', 'unity/ProjectSettings/ProjectVersion.txt') }}-${{ needs.target.outputs.ref }}
-          restore-keys: unity-library-editmode-${{ hashFiles('unity/Packages/manifest.json', 'unity/ProjectSettings/ProjectVersion.txt') }}-
+          sparse-checkout: .ci
+          path: ci-host
+      - name: Start bounded host and Docker resource diagnostics
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/fauna-diagnostics"
+          bash ci-host/.ci/fauna-signal-trace.sh start "$RUNNER_TEMP/fauna-diagnostics"
+          nohup python3 ci-host/.ci/fauna-ci-diagnostics.py monitor --out "$RUNNER_TEMP/fauna-diagnostics" > "$RUNNER_TEMP/fauna-diagnostics/monitor.log" 2>&1 < /dev/null &
+          echo "::notice title=Fauna runner::os=$RUNNER_OS arch=$RUNNER_ARCH cpus=$(nproc)"
+          echo "::notice title=Fauna host kernel and ASLR::$(uname -r) mmap_rnd_bits=$(sudo -n cat /proc/sys/vm/mmap_rnd_bits)"
+          free -h
+          df -h /
+      - name: Pull pinned Unity Android image before starting the Editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker pull unityci/editor:ubuntu-6000.6.0f1-android-3
+          docker image inspect unityci/editor:ubuntu-6000.6.0f1-android-3 --format '::notice title=Fauna Unity image::id={{.Id}} size={{.Size}} digests={{json .RepoDigests}}'
       - uses: game-ci/unity-test-runner@v4
         id: tests
         with:
           projectPath: unity
+          cliVersion: v0.1.73
           testMode: editmode
           customImage: unityci/editor:ubuntu-6000.6.0f1-android-3
-          customParameters: -job-worker-count 2 -gc-helper-count 1
+          customParameters: -nographics -job-worker-count 2 -gc-helper-count 1
           artifactsPath: test-results
+      - name: Publish bounded resource and Unity failure evidence
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          bash ci-host/.ci/fauna-signal-trace.sh stop "$RUNNER_TEMP/fauna-diagnostics"
+          python3 ci-host/.ci/fauna-ci-diagnostics.py report --out "$RUNNER_TEMP/fauna-diagnostics" --workspace "$GITHUB_WORKSPACE"
       - name: Summarize results (fails on zero executed tests)
         if: always()
         shell: bash
@@ -145,21 +177,34 @@ jobs:
           if failed:
               sys.exit(1)
           PY
-      - uses: actions/upload-artifact@v4
+      - name: Publish EditMode evidence
+        uses: actions/upload-artifact@v4
         if: always()
+        timeout-minutes: 10
         with:
           name: editmode-results
           path: test-results
+          retention-days: 14
+
+      - name: Upload optional resource diagnostics
+        uses: actions/upload-artifact@v4
+        if: always()
+        timeout-minutes: 3
+        continue-on-error: true
+        with:
+          name: fauna-resource-diagnostics-${{ github.job }}
+          path: ${{ runner.temp }}/fauna-diagnostics
           retention-days: 14
 
   quest-apk:
     name: Quest APK (QuestBuild.BuildApk)
     needs: [target, editmode]
     if: needs.target.outputs.apk == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 120
     env:
-      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      # Same supported Personal account route and CLI as the passing EditMode stage.
+      UNITY_LICENSE: ''
       UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
       UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
     steps:
@@ -173,28 +218,102 @@ jobs:
           repository: PaidSonGo/Unity
           ref: ${{ needs.target.outputs.ref }}
           path: unity
-      - uses: actions/cache@v4
+      # Three failing starts restored the same Library and died at native assembly reload.
+      # Validate from a clean import, without cached Editor/DataStore process state.
+      - name: Require a clean Unity import
+        shell: bash
+        run: test ! -d unity/Library
+      - uses: actions/checkout@v4
         with:
-          path: unity/Library
-          key: unity-library-android-${{ hashFiles('unity/Packages/manifest.json', 'unity/ProjectSettings/ProjectVersion.txt') }}-${{ needs.target.outputs.ref }}
-          restore-keys: unity-library-android-${{ hashFiles('unity/Packages/manifest.json', 'unity/ProjectSettings/ProjectVersion.txt') }}-
-      - uses: game-ci/unity-builder@v4
-        with:
-          projectPath: unity
-          targetPlatform: Android
-          androidExportType: androidPackage
-          customParameters: -job-worker-count 2 -gc-helper-count 1
-          buildMethod: ${{ needs.target.outputs.m2 == 'true' && 'LaneDefense.EditorTools.QuestBuild.BuildM2Apk' || 'LaneDefense.EditorTools.QuestBuild.BuildApk' }}
-          buildName: ${{ needs.target.outputs.m2 == 'true' && 'FaunaM2Sandbox' || 'LaneDefenseVR' }}
-      - name: Require an APK
+          sparse-checkout: .ci
+          path: ci-host
+      - name: Start bounded host and Docker resource diagnostics
         shell: bash
         run: |
-          apk=$(find . -name '*.apk' -not -path './unity/Library/*' | head -1)
-          [ -n "$apk" ] || { echo "::error title=APK missing::No .apk produced"; exit 1; }
-          mkdir -p apk-out && cp "$apk" apk-out/
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/fauna-diagnostics"
+          bash ci-host/.ci/fauna-signal-trace.sh start "$RUNNER_TEMP/fauna-diagnostics"
+          nohup python3 ci-host/.ci/fauna-ci-diagnostics.py monitor --out "$RUNNER_TEMP/fauna-diagnostics" > "$RUNNER_TEMP/fauna-diagnostics/monitor.log" 2>&1 < /dev/null &
+          echo "::notice title=Fauna runner::os=$RUNNER_OS arch=$RUNNER_ARCH cpus=$(nproc)"
+          echo "::notice title=Fauna host kernel and ASLR::$(uname -r) mmap_rnd_bits=$(sudo -n cat /proc/sys/vm/mmap_rnd_bits)"
+          free -h
+          df -h /
+      - name: Pull pinned Unity Android image before starting the Editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker pull unityci/editor:ubuntu-6000.6.0f1-android-3
+          docker image inspect unityci/editor:ubuntu-6000.6.0f1-android-3 --format '::notice title=Fauna Unity image::id={{.Id}} size={{.Size}} digests={{json .RepoDigests}}'
+      - name: Install the same pinned official GameCI CLI used by the test runner
+        # game-ci/cli@v0.1.73's action runs scripts/install.sh directly although the file is git mode 100644
+        # (exit 126, run 43077272338). Run the same pinned installer through bash instead; it resolves the
+        # v0.1.73 release asset and verifies its checksum, then prints the binary path.
+        shell: bash
+        run: |
+          set -euo pipefail
+          src="$RUNNER_TEMP/gameci-cli-src"
+          git clone --quiet --depth 1 --branch v0.1.73 https://github.com/game-ci/cli "$src"
+          bin=$(bash "$src/scripts/install.sh" v0.1.73 "$RUNNER_TEMP/gameci-cli")
+          [ -x "$bin" ] || chmod +x "$bin"
+          echo "$(dirname "$bin")" >> "$GITHUB_PATH"
+          "$bin" --help > /dev/null 2>&1 || "$bin" help > /dev/null 2>&1 || true
+          echo "::notice title=GameCI CLI::installed $bin"
+      - name: Build the licensed Quest APK with GameCI CLI
+        shell: bash
+        env:
+          # The official CLI only recognizes its own result banner. Our adapter emits it
+          # after the custom Quest report succeeds with exit 0 and a real APK exists.
+          ENGINE_LAUNCH_WRAPPER: bash /github/workspace/ci-host/.ci/fauna-gameci-build-log.sh
+          FAUNA_BUILD_METHOD: ${{ needs.target.outputs.m2 == 'true' && 'LaneDefense.EditorTools.QuestBuild.BuildM2Apk' || 'LaneDefense.EditorTools.QuestBuild.BuildApk' }}
+          FAUNA_BUILD_NAME: ${{ needs.target.outputs.m2 == 'true' && 'FaunaM2Sandbox' || 'LaneDefenseVR' }}
+        run: |
+          set -euo pipefail
+          game-ci build unity --engine unity \
+            --customImage unityci/editor:ubuntu-6000.6.0f1-android-3 \
+            --targetPlatform Android --androidExportType androidPackage \
+            --buildMethod "$FAUNA_BUILD_METHOD" --buildName "$FAUNA_BUILD_NAME" \
+            --versioningStrategy None --androidVersionCode 1 \
+            --customParameters="-batchmode -nographics -job-worker-count 2 -gc-helper-count 1"
+      - name: Publish bounded resource and Unity failure evidence
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          bash ci-host/.ci/fauna-signal-trace.sh stop "$RUNNER_TEMP/fauna-diagnostics"
+          python3 ci-host/.ci/fauna-ci-diagnostics.py report --out "$RUNNER_TEMP/fauna-diagnostics" --workspace "$GITHUB_WORKSPACE"
+      - name: Require an APK
+        id: package_apk
+        if: ${{ !cancelled() }}
+        shell: bash
+        env:
+          EXPECTED_APK: ${{ needs.target.outputs.m2 == 'true' && 'build/Android/FaunaM2Sandbox.apk' || 'build/Android/LaneDefenseVR.apk' }}
+        run: |
+          set -euo pipefail
+          [ -s "$EXPECTED_APK" ] || { echo "::error title=APK missing::Expected APK was not produced"; exit 1; }
+          python3 - <<'PY'
+          import os, zipfile
+          with zipfile.ZipFile(os.environ['EXPECTED_APK']) as apk:
+              assert apk.testzip() is None, 'APK CRC validation failed'
+              assert 'lib/arm64-v8a/libil2cpp.so' in apk.namelist(), 'ARM64 IL2CPP binary missing'
+          PY
+          mkdir -p apk-out && cp "$EXPECTED_APK" apk-out/
           ls -la apk-out; sha256sum apk-out/*.apk | tee -a "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - name: Publish verified Quest APK
+        uses: actions/upload-artifact@v4
+        timeout-minutes: 10
+        # Preserve a valid candidate if a post-build tool rejects the result; the job
+        # still fails in that case. Never turn a failed build step into a green job.
+        if: ${{ !cancelled() && steps.package_apk.outcome == 'success' }}
         with:
           name: FaunaVsKosmici-Quest-apk
           path: apk-out
+          retention-days: 14
+      - name: Upload optional resource diagnostics
+        uses: actions/upload-artifact@v4
+        if: always()
+        timeout-minutes: 3
+        continue-on-error: true
+        with:
+          name: fauna-resource-diagnostics-${{ github.job }}
+          path: ${{ runner.temp }}/fauna-diagnostics
           retention-days: 14
